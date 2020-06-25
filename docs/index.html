@@ -1,4 +1,3 @@
-
 ---
 layout: default
 title: Universal Litmus Patterns
@@ -36,3 +35,46 @@ title: Universal Litmus Patterns
 
 <h5 id="contributions"><b>Contributions</b></h5>
 <p>We introduce a fast benchmark technique for detecting backdoor attacks (aka Trojan attacks) on CNNs.</p>
+
+<p>Universal Litmus Patterns (ULPs):
+<li>Are optimized input images for which the network’s output becomes a good indicator of whether the network is clean or poisoned (contains a backdoor).</li>
+<li>Are trained only on models and not images (train/test).</li>
+<li>Transfer across network architectures.</li>
+We provide hundreds of clean and poisoned models per dataset for Tiny-ImageNet, CIFAR10, MNIST, and German Traffic Sign Recognition Benchmark (GTSRB).</p>
+
+<h5 id="threat_model"><b>Threat model</b></h5>
+<p>Each poisoned model is trained to contain a single trigger that causes images from the source class to be classified as the target class.
+We assume no prior knowledge of the targeted class or the triggers used by attackers.</p>
+
+<p style="text-align:center;"><img src="{{ site.baseurl }}/assets/images/threat_model.png" width="750" alt style></p>
+
+<h5 id="results"><b>Results</b></h5>
+<p>ULPs are fast for detection because each ULP requires just one forward pass through the network. Despite this simplicity, surprisingly, ULPs are
+competitive for detecting backdoor attacks, establishing a new performance baseline: area under the ROC curve close to 1 on both CIFAR10 and MNIST, 0.96 on GTSRB (for
+ResNet18), and 0.94 on Tiny-ImageNet. </p>
+<p>ULPs consistently outperform the baselines, Neural cleanse [1] and noise inputs (replace ULPs with random inputs), on all datasets with respect to AUCs,
+while being considerably faster than Neural cleanse (~90,000 times).</p>
+
+<p style="text-align:center;"><img src="{{ site.baseurl }}/assets/images/results_table.png" width="750" alt style></p>
+
+<p style="text-align:center;"><img src="{{ site.baseurl }}/assets/images/results_GTSRB.png" width="750" alt style></p>
+
+<p>On GTSRB, ULPs trained on a specific architecture, e.g., VGG or ResNet, transfer well to similar architectures, i.e., random-VGGs and random-ResNets, where we trained models with a random depth and random number of convolutional kernels. ULPs have limited Transferability between different architectures, e.g., from VGG to ResNet and vice versa. </p>
+
+<p style="text-align:center;"><img src="{{ site.baseurl }}/assets/images/results_generalizability.png" width="500" alt style></p>
+
+The following figure shows the optimized ULPs calculated on the Tiny ImageNet Dataset.
+
+
+<p style="text-align:center;"><img src="{{ site.baseurl }}/assets/images/ULPs_TinyImageNet.png" width="400" alt style></p>
+
+<h5 id="dataset"><b>ULP Dataset</b></h5>
+    <li><a href="https://drive.google.com/drive/folders/1ye2KCRfzhbjtV3TMSRR5vlSBlvqNUqYL?usp=sharing">CIFAR-10</a></li>
+    <li><a href="https://drive.google.com/drive/folders/1shYf6mUn81p0ve1DQBFhxjE_B9JN1yKt?usp=sharing">Tiny-ImageNet</a></li>
+    <li>MNIST (Coming Soon)</li>
+    <li>GTSRB (Coming Soon)</li>
+    <li>Generalizability on GTSRB (Coming Soon)</li>
+
+<h5 id="references"><b>References</b></h5>
+[1] Wang, B., Yao, Y., Shan, S., Li, H., Viswanath, B., Zheng, H., & Zhao, B. Y. (2019, May). Neural cleanse: Identifying and mitigating backdoor attacks in neural networks. In <i>2019 IEEE Symposium on Security and Privacy (SP)</i> (pp. 707-723). IEEE.
+
