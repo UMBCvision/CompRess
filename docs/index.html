@@ -32,16 +32,46 @@ title: CompReSS
 <p><a href="https://github.com/UMBCvision/CompReSS">Official CompReSS code</a></p>
 
 <h5 id="contributions"><b>Contributions</b></h5>
-
+<p> By training a student using our framework(CompReSS), we trained a model using unlabeled data which is better than training a self-supervised model from the scratch. 
+    Our models reduce the gap between SOTA self-supervised and supervised models and even outperformed supervised in Alexnet architecture.   
+    </p>
 
 <p style="text-align:center;"><img src="{{ site.baseurl }}/assets/images/compare_graph.png" width="750" alt style></p>
 
 <h5 id="results"><b>Results</b></h5>
 
 
-<p style="text-align:center;"><img src="{{ site.baseurl }}/assets/images/result_table1.png" width="750" alt style></p>
-    <p style="text-align:center;"><img src="{{ site.baseurl }}/assets/images/result_table2.png" width="750" alt style></p>
-    <p style="text-align:center;"><img src="{{ site.baseurl }}/assets/images/result_table3.png" width="750" alt style></p>
+<p style="text-align:center;"><img src="{{ site.baseurl }}/assets/images/result_table1.png" width="750" alt style>
+    We train the teacher model on ImageNet without labels, compress it to the student model, and evaluate using ImageNet validation set. 
+    Our model consistently outperforms all compression methods for various teacher-student combinations.  
+    On NN, our ResNet50 is only 1 point worse than its 50x4 teacher. when we compress ResNet50x4 to AlexNet, we get <b>57.6%</b> for linear and <b>52.3%</b>
+    for NN evaluation which outperforms the supervised model by almost 1 point in Linear and 9 points in NN evaluation.
+    
+    For cluster alignment, we cluster our features on 
+    ImageNet using k-means, map each cluster to a unique ImageNet category, and evaluate on ImageNet validation set for Top-1 accuracy. 
+    Our method outperforms all baselines including the supervised one with a large margin ($33.3\%$ compared to $22.9\%$.) Note that any model
+    below the teacher row uses the student architecture.
+    </p>
+    
+    
+    
+    
+    
+    <p style="text-align:center;"><img src="{{ site.baseurl }}/assets/images/result_table2.png" width="750" alt style>
+    Comparison with SOTA self-supervised methods, our method outperforms all baselines including the model trained with ImageNet labels for AlexNet.
+        We pick the best layer to report the results that is written in parenthesis: 'f7' refers to 'fc7' layer and 'c4' refers to 'conv4' layer. * refers to 10-crop evaluation.
+        
+    </p>
+    
+    
+    
+    <p style="text-align:center;"><img src="{{ site.baseurl }}/assets/images/result_table3.png" width="750" alt style>
+    
+    We evaluate AlexNet trained with ResNet50x4 on PASCAL-VOC classification and detection tasks. For classification task, we only train a linear classifier on
+        top of frozen backbone which is in contrast to the baselines that finetune all layers. Interestingly, even in this difficult setting, our method outperforms 
+        all self-supervised benchmarks including MoCo and is on par with the ImageNet supervised features. For object detection, we use the Fast-RCNN to finetune all layers.
+    
+    </p>
 
 
 
