@@ -1,1 +1,8 @@
-theme: jekyll-theme-cayman
+source:      .
+destination: ./_site
+includes:    ./_includes
+
+collections:
+  projects:
+    output: true
+theme: jekyll-theme-minimal
