@@ -3,7 +3,7 @@
 # CompReSS: Compressing Representations for Self-Supervised Learning
 
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/62820830/85651425-f2d9a480-b675-11ea-99e8-8fcf32d0a266.png" width="300">
+  <img src="https://user-images.githubusercontent.com/62820830/85651425-f2d9a480-b675-11ea-99e8-8fcf32d0a266.png" width="100%">
 </p>
 
 
@@ -114,7 +114,7 @@ python eval_cluster_alignment.py  \
 ## Results
 
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/62820830/85651404-e48b8880-b675-11ea-9432-754546efad1a.png" width="300">
+  <img src="https://user-images.githubusercontent.com/62820830/85651404-e48b8880-b675-11ea-9432-754546efad1a.png" width="100%">
 </p>
 
 Our model achieves the following performance :
