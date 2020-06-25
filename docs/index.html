@@ -15,7 +15,7 @@ title: CompReSS
 <div style="height:30px;">
 <br>
 
-<p style="text-align:center;"><img src="{{ site.baseurl }}/assets/images/teaser.png" width="750" alt style></p>
+<p style="text-align:center;"><img src="{{ site.baseurl }}/assets/images/teaser.png" width="100%" alt style></p>
 
 <h5 id="abstract"><b>Abstractt</b></h5>
 <p>Self-supervised learning aims to learn good representations with unlabeled data. Recent works have shown that larger models benefit more from self-supervised learning than
@@ -36,14 +36,14 @@ title: CompReSS
     Our models reduce the gap between SOTA self-supervised and supervised models and even outperformed supervised in Alexnet architecture.   
     </p>
 
-<p style="text-align:center;"><img src="{{ site.baseurl }}/assets/images/compare_graph.png" width="750" alt style></p>
+<p style="text-align:center;"><img src="{{ site.baseurl }}/assets/images/compare_graph.png" width="100%" alt style></p>
 
 <h5 id="results"><b>Results</b></h5>
 
     <p>
         We train the teacher model on ImageNet without labels, compress it to the student model, and evaluate using ImageNet validation set. 
     Our model consistently outperforms all compression methods for various teacher-student combinations.  
-    On NN, our ResNet50 is only 1 point worse than its 50x4 teacher. when we compress ResNet50x4 to AlexNet, we get <b>57.6%</b> for linear and <b>52.3%</b>
+    On NN, our ResNet50 is only 1 point worse than its ResNet50x4 teacher. when we compress ResNet50x4 to AlexNet, we get <b>57.6%</b> for linear and <b>52.3%</b>
     for NN evaluation which outperforms the supervised model by almost 1 point in Linear and 9 points in NN evaluation.
     
     For cluster alignment, we cluster our features on 
@@ -52,7 +52,7 @@ title: CompReSS
     below the teacher row uses the student architecture.
         
     </p>
-<p style="text-align:center;"><img src="{{ site.baseurl }}/assets/images/result_table1.png" width="750" alt style>
+<p style="text-align:center;"><img src="{{ site.baseurl }}/assets/images/result_table1.png" width="100%" alt style>
     
     </p>
     
@@ -64,7 +64,7 @@ title: CompReSS
         
     </p>
     
-    <p style="text-align:center;"><img src="{{ site.baseurl }}/assets/images/result_table2.png" width="750" alt style></p>
+    <p style="text-align:center;"><img src="{{ site.baseurl }}/assets/images/result_table2.png" width="100%" alt style></p>
     
     
     <p>
@@ -74,16 +74,16 @@ title: CompReSS
         
     </p> 
     
-    <p style="text-align:center;"><img src="{{ site.baseurl }}/assets/images/result_table3.png" width="750" alt style>
+    <p style="text-align:center;"><img src="{{ site.baseurl }}/assets/images/result_table3.png" width="100%" alt style>
     </p>
 
 
 
 <h5 id="Abilation Study"><b>Abilation Study</b></h5>
-<p style="text-align:center;"><img src="{{ site.baseurl }}/assets/images/abilative.png" width="750" alt style></p>
+<p style="text-align:center;"><img src="{{ site.baseurl }}/assets/images/abilative.png" width="100%" alt style></p>
     
 <h5 id="cluster alignment"><b>Cluster Alignment Result</b></h5>   
-<p style="text-align:center;"><img src="{{ site.baseurl }}/assets/images/query_img_large.jpg" width="750" alt style></p>
+<p style="text-align:center;"><img src="{{ site.baseurl }}/assets/images/query_img_large.jpg" width="100%" alt style></p>
 
 <h5 id="references"><b>References</b></h5>
 [1] 
