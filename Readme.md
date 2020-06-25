@@ -4,7 +4,7 @@
 
 
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/62820830/85651404-e48b8880-b675-11ea-9432-754546efad1a.png" width="100%">
+  <img src="https://user-images.githubusercontent.com/62820830/85651404-e48b8880-b675-11ea-9432-754546efad1a.png" width="85%">
 </p>
 
 This repository is the official implementation of [CompReSS: Compressing Representations for Self-Supervised Learning
@@ -126,7 +126,7 @@ Our model achieves the following performance :
 | ------------------ |----------------------------------| ----------------- | ----------------- |
 | CompReSS(Resnet50) |               71.6%              |        63.4%        | [Pre-trained Resnet50](https://drive.google.com/file/d/15rzzSkcedEuCE7Cm8yLXopA5PqHUQscb/view?usp=sharing) |
 | CompReSS(Mobilenet)|               63.0%              |        54.4%        | [Pre-trained Mobilenet](https://drive.google.com/file/d/1gNkO48iREh6M6uuLd8TGqaOm3ChWiAdc/view?usp=sharing) |
-| CompReSS(Resnet18) |               61.7%              |        53.4%        | [Pre-trained Resnet18](https://drive.google.com/file/d/1C3uJ6MS2A0WCBeygxyBs4grP4ixptndE/view?usp=sharing) | 
+| CompReSS(Resnet18) |               61.7%              |        53.4%        | [Pre-trained Resnet18](https://drive.google.com/file/d/1L-RCmD4gMeicxJhIeqNKU09_sH8R3bwS/view?usp=sharing) | 
 | CompReSS(Alexnet)  |               57.6%              |        52.3%        | [Pre-trained Alexnet](https://drive.google.com/file/d/1wiEdfk6unXKtYRL1faIMoZMXnShaxBMU/view?usp=sharing) |
 
 
