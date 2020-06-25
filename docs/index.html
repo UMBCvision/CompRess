@@ -18,7 +18,13 @@ title: Universal Litmus Patterns
 <p style="text-align:center;"><img src="{{ site.baseurl }}/assets/images/teaser.png" width="750" alt style></p>
 
 <h5 id="abstract"><b>Abstractt</b></h5>
-<p></p>
+<p>Self-supervised learning aims to learn good representations with unlabeled data. Recent works have shown that larger models benefit more from self-supervised learning than
+    smaller models. As a result, the gap between the supervised and self-supervised learning has been greatly reduced for larger models. In this work, we focus on 
+    self-supervised learning for low capacity models that has various applications (e.g., edge computation). We compress a deep teacher model so that the student mimics the
+    relative distances between the datapoints in the teacher embeddings. For ResNet-50, our method outperforms SOTA self-supervised models marginally on ImageNet linear 
+    evaluation and with a large margin on nearest neighbor evaluation (by 6 points). For AlexNet, our method outperforms all previous methods including the fully supervised
+    model on ImageNet linear evaluation (57.6% compared to 56.5%) and by a large margin on nearest neighbor evaluation (52.3% compared to 41.4%). 
+    This is the first time a self-supervised AlexNet has outperformed supervised one on ImageNet classification.</p>
 
 <h5 id="paper"><b>Paper</b></h5>
 <p><a href="https://arxiv.org/">CompReSS: Compressing Representations for Self-Supervised Learning</a></p>
