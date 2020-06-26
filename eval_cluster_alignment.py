@@ -458,15 +458,22 @@ def dump_visualization(input_cluster_samples_train , args):
 
 def main_worker(args):
 
-
+    # Get train/val loader
     train_loader, val_loader = get_loaders(args.data, args.batch_size, args.workers)
 
+    # Create and load the model
+    # If you want to evaluate your model, modify this part and load your model
+    # ------------------------------------------------------------------------
+    # MODIFY 'get_model' TO EVALUATE YOUR MODEL
     model = get_model(args)
 
+    # ------------------------------------------------------------------------
 
 
 
 
+    # Train K-means
+    # ---------------------------------------------------------------
     train_clusters = os.path.join(args.save, 'train_clusters.txt')
     val_clusters = os.path.join(args.save, 'val_clusters.txt')
 
@@ -483,8 +490,16 @@ def main_worker(args):
         pickle.dump((input_cluster_samples_train, target_cluster_samples_train), open(cached_cluster_samples, "wb"))
 
 
+    # ---------------------------------------------------------------
 
 
+
+
+
+
+
+    # Map clusters to categories
+    # ---------------------------------------------------------------
     cluster_allignment_cost = np.zeros((1000, 1000))
     confusion_matrix = np.zeros((1000, 1000))
 
@@ -514,11 +529,12 @@ def main_worker(args):
     if args.visualization :
         dump_visualization(input_cluster_samples_train , args)
 
+    # ---------------------------------------------------------------
 
 
 
-
-
+    # Calculate accuracy on train/val set
+    # ---------------------------------------------------------------
     correct = 0
     all = 0
     for c in range(1000):
@@ -529,11 +545,6 @@ def main_worker(args):
 
 
     print("acc train : %f" % (correct / all))
-
-
-
-
-
 
 
     input_cluster_samples_val, target_cluster_samples_val = get_cluster_samples_val(val_clusters, args)
@@ -549,6 +560,7 @@ def main_worker(args):
 
     print("acc val : %f" % (correct / all))
 
+    # ---------------------------------------------------------------
 
 
 

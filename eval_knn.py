@@ -67,6 +67,8 @@ def main():
     main_worker(args)
 
 
+
+
 def load_weights(model, wts_path):
     if not wts_path:
         logger.info('===> no weights provided <===')
@@ -93,7 +95,8 @@ def load_weights(model, wts_path):
             state_dict[m_key] = m_val
             logger.info('not copied => ' + m_key)
 
-    model.load_state_dict(state_dict)
+    model.fc = nn.Sequential()
+    model.load_state_dict(state_dict , strict=False)
 
 
 # 1. create a model
@@ -231,11 +234,22 @@ def get_loaders(dataset_dir, bs, workers):
 def main_worker(args):
     global best_acc1
 
+    # Get train/val loader 
+    # ---------------------------------------------------------------
     train_loader, val_loader = get_loaders(args.data, args.batch_size, args.workers)
 
+    # Create and load the model
+    # If you want to evaluate your model, modify this part and load your model
+    # ------------------------------------------------------------------------
+    # MODIFY 'get_model' TO EVALUATE YOUR MODEL
     model = get_model(args)
     model = nn.DataParallel(model).cuda()
 
+    # ------------------------------------------------------------------------
+
+
+    # Forward training samples throw the model and cache feats
+    # ------------------------------------------------------------------------
     cudnn.benchmark = True
 
     cached_feats = '%s/train_feats.pth.tar' % args.save
@@ -256,11 +270,20 @@ def main_worker(args):
         val_feats, val_labels = get_feats(val_loader, model, args.print_freq, args.no_normalize)
         torch.save((val_feats, val_labels), cached_feats)
 
+
+    # ------------------------------------------------------------------------
+
+    # Calculate NN accuracy on validation set
+    # ------------------------------------------------------------------------
     start = time.time()
     ap = faiss_knn(train_feats, train_labels, val_feats, val_labels, args.k)
     faiss_time = time.time() - start
     logger.info('=> faiss time : {:.2f}s'.format(faiss_time))
     logger.info(' * Acc {:.2f}'.format(ap))
+
+
+
+
 
 
 def normalize(x):
