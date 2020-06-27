@@ -65,6 +65,34 @@ python train_student_moco.py \
     --data <path_to_imagenet_data>
 ```
 
+```train
+python train_student_moco.py \
+    --cache_teacher <True or False> \ 
+    --teacher_arch <resnet50, alexnet, > \ 
+    --teacher <path_to_pretrained_model or cached_features> \
+    --student_arch <mobilenet or > \
+    --checkpoint_path <path_to_checkpoint_folder> \
+    --data <path_to_imagenet_data>
+```
+
+```train
+python train_student_moco.py \
+    --teacher_arch resnet50 \ 
+    --teacher <path_to_pretrained_model or cached_features> \
+    --student_arch mobilenet \
+    --checkpoint_path <path_to_checkpoint_folder> \
+    --data <path_to_imagenet_data>
+```
+
+```train
+python train_student_moco.py \
+    --cache_teacher True \ 
+    --teacher <path_to_pretrained_model or cached_features> \
+    --student_arch mobilenet \
+    --checkpoint_path <path_to_checkpoint_folder> \
+    --data <path_to_imagenet_data>
+```
+
 
 To train the student(s) without Moco framework execute train_student.py instead of train_student_moco.py
 
