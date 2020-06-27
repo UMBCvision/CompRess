@@ -26,7 +26,7 @@ Project webpage. [https://umbcvision.github.io/CompReSS/
 
 ## Requirements
 
-We used Python 3.7.4 for our experiments.
+Install PyTorch and ImageNet dataset following the [official PyTorch ImageNet training code](https://github.com/pytorch/examples/tree/master/imagenet). We used Python 3.7.4 for our experiments.
 
 To install requirements:
 
@@ -52,6 +52,8 @@ conda install faiss-gpu cudatoolkit=10.0 -c pytorch # For CUDA10
 [comment]: <>  (📋Describe how to set up the environment, e.g. pip/conda/docker commands, download datasets, etc...)
 
 ## Training
+
+Our code is based on unofficial implementation of Moco from [here](https://github.com/HobbitLong/CMC)
 
 To train the student(s) using cached teachers in the paper, run this command:
 
