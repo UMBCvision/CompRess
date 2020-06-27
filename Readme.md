@@ -7,20 +7,35 @@
   <img src="https://user-images.githubusercontent.com/62820830/85651404-e48b8880-b675-11ea-9432-754546efad1a.png" width="85%">
 </p>
 
-This repository is the official implementation of [CompReSS: Compressing Representations for Self-Supervised Learning
+This repository is the official implementation of [https://arxiv.org/
 ](https://arxiv.org/). 
 
-## Abstract
+Project webpage. [https://umbcvision.github.io/CompReSS/
+](https://umbcvision.github.io/CompReSS/). 
 
-Self-supervised learning aims to learn good representations with unlabeled data. Recent works have shown that larger models benefit more from self-supervised learning than smaller models. As a result, the gap between the supervised and self-supervised learning has been greatly reduced for larger models. In this work, we focus on self-supervised learning for low capacity models that has various applications (e.g., edge computation). We compress a deep teacher model so that the student mimics the relative distances between the datapoints in the teacher embeddings. For ResNet-50, our method outperforms SOTA self-supervised models marginally on ImageNet linear evaluation and with a large margin on nearest neighbor evaluation (by 6 points). For AlexNet, our method outperforms all previous methods including the fully supervised model on ImageNet linear evaluation (57.6% compared to 56.5%) and by a large margin on nearest neighbor evaluation (52.3% compared to 41.4%). This is the first time a self-supervised AlexNet has outperformed supervised one on ImageNet classification.
-
-
+```
+@Article{abbasi2020compress,
+  author  = {Soroush Abbasi Koohpayegani and Ajinkya Tejankar and Vipin Pillai and Hamed Pirsiavash},
+  title   = {CompReSS: Compressing Representations for Self-Supervised Learning},
+  journal = {arXiv preprint arXiv:},
+  year    = {2020},
+}
+```
 
 [comment]: <> (📋Optional: include a graphic explaining your approach/main result, bibtex entry, link to demos, blog posts and tutorials)
 
 ## Requirements
 
+We used Python 3.7.4 for our experiments.
+
 To install requirements:
+
+PyTorch:
+```setup
+conda install pytorch torchvision cudatoolkit=10.1 -c pytorch
+```
+
+To run NN and Cluster Alignment, you require to install FAISS. 
 
 FAISS: 
 ```setup
@@ -31,10 +46,7 @@ conda install faiss-cpu -c pytorch
 conda install faiss-gpu cudatoolkit=10.0 -c pytorch # For CUDA10
 ```
 
-PyTorch:
-```setup
-conda install pytorch torchvision cudatoolkit=10.1 -c pytorch
-```
+
 
 
 [comment]: <>  (📋Describe how to set up the environment, e.g. pip/conda/docker commands, download datasets, etc...)
