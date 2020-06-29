@@ -1,4 +1,3 @@
-
 import os
 import sys
 import time
@@ -11,15 +10,15 @@ from torchvision import transforms, datasets
 import torch.nn as nn
 
 from util import adjust_learning_rate, AverageMeter
-from models.resnet import resnet18,resnet50
+from models.resnet import resnet18, resnet50
 from models.alexnet import AlexNet as alexnet
 from models.mobilenet import MobileNetV2 as mobilenet
-from nn.compress_loss import CompReSSMomentum, Teacher
+from nn.compress_loss import CompReSS, Teacher
 
 from collections import OrderedDict
 
-def parse_option():
 
+def parse_option():
     parser = argparse.ArgumentParser('argument for training')
 
     parser.add_argument('--print_freq', type=int, default=100, help='print frequency')
@@ -36,10 +35,9 @@ def parse_option():
     parser.add_argument('--weight_decay', type=float, default=1e-4, help='weight decay')
     parser.add_argument('--momentum', type=float, default=0.9, help='momentum')
 
-
     # model definition
     parser.add_argument('--student_arch', type=str, default='alexnet',
-                        choices=['alexnet' , 'resnet18' , 'resnet50', 'mobilenet'])
+                        choices=['alexnet', 'resnet18', 'resnet50', 'mobilenet'])
     parser.add_argument('--teacher_arch', type=str, default='resnet50',
                         choices=['resnet50x4', 'resnet50'])
     parser.add_argument('--cache_teacher', action='store_true',
@@ -59,8 +57,6 @@ def parse_option():
     parser.add_argument('--checkpoint_path', default='output/', type=str,
                         help='where to save checkpoints. ')
 
-    parser.add_argument('--alpha', type=float, default=0.999, help='exponential moving average weight')
-
     opt = parser.parse_args()
 
     iterations = opt.lr_decay_epochs.split(',')
@@ -72,19 +68,19 @@ def parse_option():
 
 
 # Extended version of ImageFolder to return index of image too.
-class ImageFolderEx(datasets.ImageFolder) :
+class ImageFolderEx(datasets.ImageFolder):
 
     def __getitem__(self, index):
         sample, target = super(ImageFolderEx, self).__getitem__(index)
-        return index , sample, target
+        return index, sample, target
 
 
 # Create teacher model and load weights. For cached teacher load cahced features instead.
 def get_teacher_model(opt):
     teacher = None
-    if opt.cache_teacher :
+    if opt.cache_teacher:
         train_feats, train_labels, indices = torch.load(opt.teacher)
-        teacher = Teacher(cached=True , cached_feats=train_feats)
+        teacher = Teacher(cached=True, cached_feats=train_feats)
 
     elif opt.teacher_arch == 'resnet50':
         model_t = resnet50()
@@ -105,36 +101,27 @@ def get_teacher_model(opt):
 # Create student query/key model
 def get_student_model(opt):
     student = None
-    student_key = None
     if opt.student_arch == 'alexnet':
         student = alexnet()
         student.fc = nn.Sequential()
-        student_key = alexnet()
-        student_key.fc = nn.Sequential()
 
     elif opt.student_arch == 'mobilenet':
         student = mobilenet()
         student.fc = nn.Sequential()
-        student_key = mobilenet()
-        student_key.fc = nn.Sequential()
 
     elif opt.student_arch == 'resnet18':
         student = resnet18()
         student.fc = nn.Sequential()
-        student_key = resnet18()
-        student_key.fc = nn.Sequential()
 
     elif opt.student_arch == 'resnet50':
         student = resnet50(fc_dim=8192)
-        student_key = resnet50(fc_dim=8192)
 
-    return student , student_key
+    return student
 
 
 # Create train loader
 def get_train_loader(opt):
     data_folder = os.path.join(opt.data, 'train')
-    image_size = 224
     mean = [0.485, 0.456, 0.406]
     std = [0.229, 0.224, 0.225]
     normalize = transforms.Normalize(mean=mean, std=std)
@@ -155,13 +142,6 @@ def get_train_loader(opt):
     return train_loader
 
 
-# Update Key model from Query model
-def moment_update(query_model, key_model, m):
-    """ key_model = m * key_model + (1 - m) query_model """
-    for p1, p2 in zip(query_model.parameters(), key_model.parameters()):
-        p2.data.mul_(m).add_(1-m, p1.detach().data)
-
-
 def main():
 
     args = parse_option()
@@ -173,7 +153,7 @@ def main():
     train_loader = get_train_loader(args)
 
     teacher = get_teacher_model(args)
-    student, student_key = get_student_model(args)
+    student = get_student_model(args)
 
     # Calculate feature dimension of student and teacher
     teacher.eval()
@@ -184,10 +164,9 @@ def main():
     student_feats_dim = feat_s.shape[-1]
     teacher_feats_dim = feat_t.shape[-1]
 
-    compress = CompReSSMomentum(teacher_feats_dim, student_feats_dim, args.compress_memory_size, args.compress_t)
+    compress = CompReSS(teacher_feats_dim, student_feats_dim, args.compress_memory_size, args.compress_t)
 
     student = torch.nn.DataParallel(student).cuda()
-    student_key = torch.nn.DataParallel(student_key).cuda()
     teacher.gpu()
 
     optimizer = torch.optim.SGD(student.parameters(),
@@ -198,8 +177,6 @@ def main():
     cudnn.benchmark = True
 
     args.start_epoch = 1
-    moment_update(student, student_key, 0)
-
     # routine
     for epoch in range(args.start_epoch, args.epochs + 1):
 
@@ -207,10 +184,12 @@ def main():
         print("==> training...")
 
         time1 = time.time()
-        loss = train_student(epoch, train_loader, teacher, student, student_key, compress, optimizer, args)
+        loss = train_student(epoch, train_loader, teacher, student, compress, optimizer, args)
 
         time2 = time.time()
         print('epoch {}, total time {:.2f}'.format(epoch, time2 - time1))
+
+
 
         # saving the model
         if epoch % args.save_freq == 0:
@@ -230,18 +209,12 @@ def main():
             torch.cuda.empty_cache()
 
 
-def train_student(epoch, train_loader, teacher, student, student_key, compress, optimizer, opt):
+
+def train_student(epoch, train_loader, teacher, student, compress, optimizer, opt):
     """
     one epoch training for CompReSS
     """
-    student_key.eval()
     student.train()
-
-    def set_bn_train(m):
-        classname = m.__class__.__name__
-        if classname.find('BatchNorm') != -1:
-            m.train()
-    student_key.apply(set_bn_train)
 
     batch_time = AverageMeter()
     data_time = AverageMeter()
@@ -260,14 +233,11 @@ def train_student(epoch, train_loader, teacher, student, student_key, compress, 
             inputs = inputs.cuda()
 
         # ===================forward=====================
-        teacher_feats = teacher.forward(inputs , index)
+
+        teacher_feats = teacher.forward(inputs, index)
         student_feats = student(inputs)
 
-        with torch.no_grad():
-            student_feats_key = student_key(inputs)
-            student_feats_key = student_feats_key.detach()
-
-        loss = compress(teacher_feats , student_feats , student_feats_key)
+        loss = compress(teacher_feats, student_feats)
 
         # ===================backward=====================
         optimizer.zero_grad()
@@ -276,8 +246,6 @@ def train_student(epoch, train_loader, teacher, student, student_key, compress, 
 
         # ===================meters=====================
         loss_meter.update(loss.item(), bsz)
-
-        moment_update(student, student_key, opt.alpha)
 
         torch.cuda.synchronize()
         batch_time.update(time.time() - end)
