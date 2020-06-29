@@ -146,23 +146,15 @@ python eval_cluster_alignment.py  \
 Our model achieves the following performance :
 
 
-| Model name         | Top 1 Linear Classifier Accuracy | Top 1 NN Accuracy | Pre-trained |
-| ------------------ |----------------------------------| ----------------- | ----------------- |
-| CompReSS(Resnet50) |               71.6%              |        63.4%        | [Pre-trained Resnet50](https://drive.google.com/file/d/15rzzSkcedEuCE7Cm8yLXopA5PqHUQscb/view?usp=sharing) |
-| CompReSS(Mobilenet)|               63.0%              |        54.4%        | [Pre-trained Mobilenet](https://drive.google.com/file/d/1gNkO48iREh6M6uuLd8TGqaOm3ChWiAdc/view?usp=sharing) |
-| CompReSS(Resnet18) |               61.7%              |        53.4%        | [Pre-trained Resnet18](https://drive.google.com/file/d/1L-RCmD4gMeicxJhIeqNKU09_sH8R3bwS/view?usp=sharing) | 
-| CompReSS(Alexnet)  |               57.6%              |        52.3%        | [Pre-trained Alexnet](https://drive.google.com/file/d/1wiEdfk6unXKtYRL1faIMoZMXnShaxBMU/view?usp=sharing) |
+| Model name         | Teacher | Top 1 Linear Classifier Accuracy | Top 1 NN Accuracy | Pre-trained |
+| ------------------ | --------- |----------------------------------| ----------------- | ----------------- |
+| CompReSS(Resnet50) | SimCLR ResNet50x4 |               71.6%              |        63.4%        | [Pre-trained Resnet50](https://drive.google.com/file/d/15rzzSkcedEuCE7Cm8yLXopA5PqHUQscb/view?usp=sharing) |
+| CompReSS(Mobilenet)| MocoV2 ResNet50 |               63.0%              |        54.4%        | [Pre-trained Mobilenet](https://drive.google.com/file/d/1gNkO48iREh6M6uuLd8TGqaOm3ChWiAdc/view?usp=sharing) |
+| CompReSS(Resnet18) | MocoV2 ResNet50 |               61.7%              |        53.4%        | [Pre-trained Resnet18](https://drive.google.com/file/d/1L-RCmD4gMeicxJhIeqNKU09_sH8R3bwS/view?usp=sharing) | 
+| CompReSS(Alexnet)  | SimCLR ResNet50x4 |               57.6%              |        52.3%        | [Pre-trained Alexnet](https://drive.google.com/file/d/1wiEdfk6unXKtYRL1faIMoZMXnShaxBMU/view?usp=sharing) |
 
 
 
-
-| Model name         | Top1  | Top1  | Pre-trained |
-|          | Linear Classifier Accuracy | NN Accuracy |  |
-| ------------------ |----------------------------------| ----------------- | ----------------- |
-| CompReSS(Resnet50) |               71.6%              |        63.4%        | [Pre-trained Resnet50](https://drive.google.com/file/d/15rzzSkcedEuCE7Cm8yLXopA5PqHUQscb/view?usp=sharing) |
-| CompReSS(Mobilenet)|               63.0%              |        54.4%        | [Pre-trained Mobilenet](https://drive.google.com/file/d/1gNkO48iREh6M6uuLd8TGqaOm3ChWiAdc/view?usp=sharing) |
-| CompReSS(Resnet18) |               61.7%              |        53.4%        | [Pre-trained Resnet18](https://drive.google.com/file/d/1L-RCmD4gMeicxJhIeqNKU09_sH8R3bwS/view?usp=sharing) | 
-| CompReSS(Alexnet)  |               57.6%              |        52.3%        | [Pre-trained Alexnet](https://drive.google.com/file/d/1wiEdfk6unXKtYRL1faIMoZMXnShaxBMU/view?usp=sharing) |
 
 
 ## License
