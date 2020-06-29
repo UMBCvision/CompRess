@@ -53,44 +53,35 @@ conda install faiss-gpu cudatoolkit=10.0 -c pytorch # For CUDA10
 
 ## Training
 
-Our code is based on unofficial implementation of Moco from [here](https://github.com/HobbitLong/CMC)
+Our code is based on unofficial implementation of Moco from [here](https://github.com/HobbitLong/CMC). 
 
-To train the student(s) using cached teachers in the paper, run this command:
+
+To train the student(s) using cached teachers in the paper :
+
+
+We converted TensorFlow simCLRv1 ResNet50x4(download it [here](https://github.com/google-research/simclr)) to PyTorch. You can download pretrained simCLR ResNet50x4 PyTorch model from [here](https://drive.google.com/file/d/1fZ2gfHRjVSFz9Hf2PHsPUao9ZKmUXg4z/view?usp=sharing).
+
+First, run this command to calculate and store cache features.  
+
 
 ```train
-python train_student_moco.py \
-    --teacher_model cached \ 
-    --teacher <path_to_cached_features> \
-    --student_model alexnet \
-    --checkpoint_path <path_to_checkpoint_folder> \
-    --data <path_to_imagenet_data>
-
-```
-
-
-To train the student(s) using pretrained teachers in the paper, run this command:
-
-```train
-python train_student_moco.py \
-    --teacher_model resnet50 \ 
-    --teacher <path_to_pretrained_model> \
-    --student_model mobilenet \
-    --checkpoint_path <path_to_checkpoint_folder> \
-    --data <path_to_imagenet_data>
-```
-
-```train
-python train_student_moco.py \
-    --cache_teacher <True or False> \ 
-    --teacher_arch <resnet50, alexnet, > \ 
+python train_student.py \
+    --cache_teacher \ 
     --teacher <path_to_pretrained_model or cached_features> \
-    --student_arch <mobilenet or > \
+    --student_arch mobilenet \
     --checkpoint_path <path_to_checkpoint_folder> \
     --data <path_to_imagenet_data>
 ```
 
+
+
+To train the student(s) using pretrained teachers in the paper :
+
+
+Download pretrained Moco ResNet50 model from [here](https://github.com/facebookresearch/moco).
+
 ```train
-python train_student_moco.py \
+python train_student.py \
     --teacher_arch resnet50 \ 
     --teacher <path_to_pretrained_model or cached_features> \
     --student_arch mobilenet \
@@ -98,17 +89,8 @@ python train_student_moco.py \
     --data <path_to_imagenet_data>
 ```
 
-```train
-python train_student_moco.py \
-    --cache_teacher True \ 
-    --teacher <path_to_pretrained_model or cached_features> \
-    --student_arch mobilenet \
-    --checkpoint_path <path_to_checkpoint_folder> \
-    --data <path_to_imagenet_data>
-```
 
-
-To train the student(s) without Moco framework execute train_student.py instead of train_student_moco.py
+To train the student(s) without Momentum framework execute train_student_without_momentum.py instead of train_student.py
 
 [comment]: <> (📋Describe how to train the models, with example commands on how to train the models in your paper, including the full training procedure and appropriate hyperparameters.)
 ## Evaluation
