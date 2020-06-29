@@ -62,7 +62,15 @@ To train the student(s) using cached teachers in the paper :
 We converted TensorFlow simCLRv1 ResNet50x4(download it [here](https://github.com/google-research/simclr)) to PyTorch. You can download pretrained simCLR ResNet50x4 PyTorch model from [here](https://drive.google.com/file/d/1fZ2gfHRjVSFz9Hf2PHsPUao9ZKmUXg4z/view?usp=sharing).
 
 First, run this command to calculate and store cache features.  
+```train
+python cache_feats.py \ 
+    --weight <path_to_pretrained_model> \
+    --save <path_to_save_folder> \
+    <path_to_imagenet_data>
+```
 
+
+Then train the student using cached features:  
 
 ```train
 python train_student.py \
@@ -79,6 +87,8 @@ To train the student(s) using pretrained teachers in the paper :
 
 
 Download pretrained Moco ResNet50 model from [here](https://github.com/facebookresearch/moco).
+
+Then train the student using pretrained model: 
 
 ```train
 python train_student.py \
@@ -126,10 +136,10 @@ python eval_cluster_alignment.py  \
     --batch-size 256 \ 
     --weights <path_to_pretrained_model> \
     --model resnet18  \
-    --save <path_to_save_folder> \
-    <path_to_imagenet_data> \ 
+    --save <path_to_save_folder> \ 
     --visualization \ 
-    --confusion_matrix
+    --confusion_matrix \ 
+    <path_to_imagenet_data> 
 ```
 
 
