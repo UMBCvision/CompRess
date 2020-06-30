@@ -151,8 +151,8 @@ Our model achieves the following performance on ImageNet:
 | Model name         | Teacher | Top1 Linear Classifier Accuracy | Top1 NN Accuracy | Top1 Cluster Alignment | Pre-trained |
 | ------------------ | --------- |----------------------------------| ----------------- | ------- | ----------------- |
 | CompReSS(Resnet50) | SimCLR ResNet50x4(cached) |               71.6%              |        63.4%        | 42.0% | [Pre-trained Resnet50](https://drive.google.com/file/d/15rzzSkcedEuCE7Cm8yLXopA5PqHUQscb/view?usp=sharing) |
-| CompReSS(Mobilenet)| MocoV2 ResNet50 |               63.0%              |        54.4%        | 35.5% | [Pre-trained Mobilenet](https://drive.google.com/file/d/1gNkO48iREh6M6uuLd8TGqaOm3ChWiAdc/view?usp=sharing) |
-| CompReSS(Resnet18) | MocoV2 ResNet50 |               61.7%              |        53.4%        | 34.7% | [Pre-trained Resnet18](https://drive.google.com/file/d/1L-RCmD4gMeicxJhIeqNKU09_sH8R3bwS/view?usp=sharing) | 
+| CompReSS(Mobilenet)| MoCoV2 ResNet50 |               63.0%              |        54.4%        | 35.5% | [Pre-trained Mobilenet](https://drive.google.com/file/d/1gNkO48iREh6M6uuLd8TGqaOm3ChWiAdc/view?usp=sharing) |
+| CompReSS(Resnet18) | MoCoV2 ResNet50 |               61.7%              |        53.4%        | 34.7% | [Pre-trained Resnet18](https://drive.google.com/file/d/1L-RCmD4gMeicxJhIeqNKU09_sH8R3bwS/view?usp=sharing) | 
 | CompReSS(Alexnet)  | SimCLR ResNet50x4(cached) |               57.6%              |        52.3%        | 33.3% | [Pre-trained Alexnet](https://drive.google.com/file/d/1wiEdfk6unXKtYRL1faIMoZMXnShaxBMU/view?usp=sharing) |
 
 
