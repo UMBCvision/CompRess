@@ -53,7 +53,7 @@ conda install faiss-gpu cudatoolkit=10.0 -c pytorch # For CUDA10
 
 ## Training
 
-Our code is based on unofficial implementation of Moco from [here](https://github.com/HobbitLong/CMC). 
+Our code is based on unofficial implementation of MoCo from [here](https://github.com/HobbitLong/CMC). 
 
 
 To train the student(s) using cached teachers in the paper :
