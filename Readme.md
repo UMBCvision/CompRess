@@ -65,7 +65,7 @@ python train_student.py \
     --teacher <path_to_pretrained_model or cached_features> \
     --student_arch mobilenet \
     --checkpoint_path <path_to_checkpoint_folder> \
-    --data <path_to_imagenet_data>
+    <path_to_imagenet_data>
 ```
 To train the student(s) using cached teachers in the paper :
 
@@ -77,6 +77,8 @@ First, run this command to calculate and store cached features.
 python cache_feats.py \ 
     --weight <path_to_pretrained_model> \
     --save <path_to_save_folder> \
+    --arch resnet50x4 \ 
+    --data_pre_processing SimCLR \ 
     <path_to_imagenet_data>
 ```
 
@@ -89,7 +91,7 @@ python train_student.py \
     --teacher <path_to_pretrained_model or cached_features> \
     --student_arch mobilenet \
     --checkpoint_path <path_to_checkpoint_folder> \
-    --data <path_to_imagenet_data>
+    <path_to_imagenet_data>
 ```
 
 To train the student(s) without Momentum framework execute train_student_without_momentum.py instead of train_student.py
