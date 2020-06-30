@@ -4,7 +4,7 @@
 
 
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/62820830/85651404-e48b8880-b675-11ea-9432-754546efad1a.png" width="85%">
+  <img src="https://user-images.githubusercontent.com/62820830/86079163-df578080-ba5d-11ea-84f0-79d386a5b8f1.png" width="85%">
 </p>
 
 This repository is the official implementation of [https://arxiv.org/
