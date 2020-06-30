@@ -26,25 +26,17 @@ Project webpage. [https://umbcvision.github.io/CompReSS/
 
 ## Requirements
 
-Install PyTorch and ImageNet dataset following the [official PyTorch ImageNet training code](https://github.com/pytorch/examples/tree/master/imagenet). We used Python 3.7.4 for our experiments.
+Install PyTorch and ImageNet dataset following the [official PyTorch ImageNet training code](https://github.com/pytorch/examples/tree/master/imagenet). We used Python 3.7 for our experiments.
 
-To install requirements:
 
-PyTorch:
-```setup
-conda install pytorch torchvision cudatoolkit=10.1 -c pytorch
-```
+- Install PyTorch ([pytorch.org](http://pytorch.org))
+
 
 To run NN and Cluster Alignment, you require to install FAISS. 
 
 FAISS: 
-```setup
-# CPU version only
-conda install faiss-cpu -c pytorch
+- Install FAISS ([https://github.com/facebookresearch/faiss/blob/master/INSTALL.md](https://github.com/facebookresearch/faiss/blob/master/INSTALL.md))
 
-# GPU version
-conda install faiss-gpu cudatoolkit=10.0 -c pytorch # For CUDA10
-```
 
 
 
@@ -80,7 +72,7 @@ To train the student(s) using cached teachers in the paper :
 
 We converted TensorFlow simCLRv1 ResNet50x4([https://github.com/google-research/simclr](https://github.com/google-research/simclr)) to PyTorch. You can download pretrained simCLR ResNet50x4 PyTorch model from [here](https://drive.google.com/file/d/1fZ2gfHRjVSFz9Hf2PHsPUao9ZKmUXg4z/view?usp=sharing).
 
-First, run this command to calculate and store cache features.  
+First, run this command to calculate and store cached features.  
 ```train
 python cache_feats.py \ 
     --weight <path_to_pretrained_model> \
