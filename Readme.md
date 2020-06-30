@@ -8,10 +8,10 @@
 </p>
 
 This repository is the official implementation of [https://arxiv.org/
-](https://arxiv.org/). 
+](https://arxiv.org/) 
 
 Project webpage. [https://umbcvision.github.io/CompReSS/
-](https://umbcvision.github.io/CompReSS/). 
+](https://umbcvision.github.io/CompReSS/) 
 
 ```
 @Article{abbasi2020compress,
@@ -53,13 +53,32 @@ conda install faiss-gpu cudatoolkit=10.0 -c pytorch # For CUDA10
 
 ## Training
 
-Our code is based on unofficial implementation of MoCo from [here](https://github.com/HobbitLong/CMC). 
+Our code is based on unofficial implementation of MoCo from [https://github.com/HobbitLong/CMC](https://github.com/HobbitLong/CMC). 
 
 
+
+
+
+
+To train the student(s) using pretrained teachers in the paper :
+
+
+Download pretrained official MoCo ResNet50 model from [https://github.com/facebookresearch/moco](https://github.com/facebookresearch/moco).
+
+Then train the student using pretrained model: 
+
+```train
+python train_student.py \
+    --teacher_arch resnet50 \ 
+    --teacher <path_to_pretrained_model or cached_features> \
+    --student_arch mobilenet \
+    --checkpoint_path <path_to_checkpoint_folder> \
+    --data <path_to_imagenet_data>
+```
 To train the student(s) using cached teachers in the paper :
 
 
-We converted TensorFlow simCLRv1 ResNet50x4(download it [here](https://github.com/google-research/simclr)) to PyTorch. You can download pretrained simCLR ResNet50x4 PyTorch model from [here](https://drive.google.com/file/d/1fZ2gfHRjVSFz9Hf2PHsPUao9ZKmUXg4z/view?usp=sharing).
+We converted TensorFlow simCLRv1 ResNet50x4([https://github.com/google-research/simclr](https://github.com/google-research/simclr)) to PyTorch. You can download pretrained simCLR ResNet50x4 PyTorch model from [here](https://drive.google.com/file/d/1fZ2gfHRjVSFz9Hf2PHsPUao9ZKmUXg4z/view?usp=sharing).
 
 First, run this command to calculate and store cache features.  
 ```train
@@ -80,25 +99,6 @@ python train_student.py \
     --checkpoint_path <path_to_checkpoint_folder> \
     --data <path_to_imagenet_data>
 ```
-
-
-
-To train the student(s) using pretrained teachers in the paper :
-
-
-Download pretrained Moco ResNet50 model from [here](https://github.com/facebookresearch/moco).
-
-Then train the student using pretrained model: 
-
-```train
-python train_student.py \
-    --teacher_arch resnet50 \ 
-    --teacher <path_to_pretrained_model or cached_features> \
-    --student_arch mobilenet \
-    --checkpoint_path <path_to_checkpoint_folder> \
-    --data <path_to_imagenet_data>
-```
-
 
 To train the student(s) without Momentum framework execute train_student_without_momentum.py instead of train_student.py
 
@@ -153,7 +153,7 @@ python eval_cluster_alignment.py  \
 
 
 
-Our model achieves the following performance :
+Our model achieves the following performance on ImageNet:
 
 
 | Model name         | Teacher | Top1 Linear Classifier Accuracy | Top1 NN Accuracy | Top1 Cluster Alignment | Pre-trained |
