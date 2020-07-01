@@ -108,7 +108,7 @@ python eval_knn.py \
     --save <path_to_save_folder> \
     <path_to_imagenet_data>
 ```
-Note that above execution will cache features too. After first execution, you can add "--load_cache" flag to load cached features from file.   
+Note that above execution will cache features too. After first execution, you can add "--load_cache" flag to load cached features from a file.   
 
 To evaluate cluster alignment models on ImageNet, run:
 
