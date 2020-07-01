@@ -103,10 +103,23 @@ To evaluate NN models on ImageNet, run:
 
 ```eval
 python eval_knn.py \
-    -a alexnet \
+    --arch alexnet \
     --weights <path_to_pretrained_model> \
     --save <path_to_save_folder> \
     <path_to_imagenet_data>
+```
+Note that above execution will cache features too. After first execution, you can add "--load_cache" flag to load cached features from file.   
+
+To evaluate cluster alignment models on ImageNet, run:
+
+```eval
+python eval_cluster_alignment.py  \
+    --weights <path_to_pretrained_model> \
+    --arch resnet18  \
+    --save <path_to_save_folder> \ 
+    --visualization \ 
+    --confusion_matrix \ 
+    <path_to_imagenet_data> 
 ```
 
 
@@ -123,18 +136,6 @@ python eval_multiple_linear.py \
     <path_to_imagenet_data>
 ```
 
-To evaluate cluster alignment models on ImageNet, run:
-
-```eval
-python eval_cluster_alignment.py  \
-    --batch-size 256 \ 
-    --weights <path_to_pretrained_model> \
-    --model resnet18  \
-    --save <path_to_save_folder> \ 
-    --visualization \ 
-    --confusion_matrix \ 
-    <path_to_imagenet_data> 
-```
 
 
 
