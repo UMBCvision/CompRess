@@ -22,38 +22,34 @@ import numpy as np
 import faiss
 
 from tools import *
-from models.alexnet import AlexNet
-from models.mobilenet import MobileNetV2
+from models.resnet import resnet18,resnet50
+from models.alexnet import AlexNet as alexnet
+from models.mobilenet import MobileNetV2 as mobilenet
 
 
-parser = argparse.ArgumentParser(description='Unsupervised distillation')
-parser.add_argument('data', metavar='DIR',
-                    help='path to dataset')
-parser.add_argument('-j', '--workers', default=4, type=int, metavar='N',
+parser = argparse.ArgumentParser(description='NN evaluation')
+parser.add_argument('data', metavar='DIR', help='path to dataset')
+parser.add_argument('-j', '--workers', default=8, type=int,
                     help='number of data loading workers (default: 4)')
-parser.add_argument('-a', '--arch', default='resnet18',
-                    help='model architecture: ' +
-                         ' | '.join(model_names) +
-                         ' (default: resnet18)')
+parser.add_argument('-a', '--arch', type=str, default='alexnet',
+                        choices=['alexnet' , 'resnet18' , 'resnet50', 'mobilenet' ,
+                                 'moco_alexnet' , 'moco_resnet18' , 'moco_resnet50', 'moco_mobilenet' ,
+                                 'sup_alexnet' , 'sup_resnet18' , 'sup_resnet50', 'sup_mobilenet'])
+
+
 parser.add_argument('-b', '--batch-size', default=256, type=int,
-                    metavar='N',
                     help='mini-batch size (default: 256), this is the total '
                          'batch size of all GPUs on the current node when '
                          'using Data Parallel or Distributed Data Parallel')
 parser.add_argument('-p', '--print-freq', default=90, type=int,
-                    metavar='N', help='print frequency (default: 10)')
-parser.add_argument('--save', default='./output/knn_1', type=str,
+                    help='print frequency (default: 10)')
+parser.add_argument('--save', default='./output/cluster_alignment_1', type=str,
                     help='experiment output directory')
-parser.add_argument('-e', '--evaluate', dest='evaluate', action='store_true',
-                    help='evaluate model on validation set')
 parser.add_argument('--weights', dest='weights', type=str,
                     help='pre-trained model weights')
 parser.add_argument('--load_cache', action='store_true',
                     help='should the features be recomputed or loaded from the cache')
 parser.add_argument('-k', default=1, type=int, help='k in kNN')
-parser.add_argument('--no_normalize', action='store_true', help='disable feature normalization')
-
-best_acc1 = 0
 
 
 def main():
@@ -67,132 +63,95 @@ def main():
     main_worker(args)
 
 
-
-
-def load_weights(model, wts_path):
-    if not wts_path:
-        logger.info('===> no weights provided <===')
-        return
-
-    wts = torch.load(wts_path)
-    if 'state_dict' in wts:
-        ckpt = wts['state_dict']
-    elif 'model' in wts:
-        ckpt = wts['model']
-    elif 'network' in wts:
-        ckpt = wts['network']
-    else:
-        ckpt = wts
-
-    ckpt = {k.replace('module.', ''): v for k, v in ckpt.items()}
-    ckpt = {k.replace('encoder_q.', ''): v for k, v in ckpt.items()}
-    state_dict = {}
-
-    for m_key, m_val in model.state_dict().items():
-        if m_key in ckpt:
-            state_dict[m_key] = ckpt[m_key]
-        else:
-            state_dict[m_key] = m_val
-            logger.info('not copied => ' + m_key)
-
-    model.fc = nn.Sequential()
-    model.load_state_dict(state_dict , strict=False)
-
-
-# 1. create a model
-# 2. remove the final layer
-# 3. load the weights
-# 4. freeze the weights
 def get_model(args):
-    if args.arch == 'alexnet':
-        model = AlexNet()
-        model.fc = nn.Sequential()
-        load_weights(model, args.weights)
-        for p in model.parameters():
-            p.requires_grad = False
-    elif args.arch == 'conv5_alexnet':
-        model = AlexNet()
-        model.fc = nn.Sequential()
-        load_weights(model, args.weights)
-        model = nn.Sequential(
-            *model.features,
-            model.avgpool,
-            nn.Flatten(),
-        )
-        print(model)
-        for p in model.parameters():
-            p.requires_grad = False
-    elif args.arch == 'pt_alexnet':
-        model = models.alexnet()
-        classif = list(model.classifier.children())[:5]
-        model.classifier = nn.Sequential(*classif)
-        load_weights(model, args.weights)
-        for p in model.parameters():
-            p.requires_grad = False
-    elif args.arch == 'mobilenet':
-        model = MobileNetV2()
-        model.fc = nn.Sequential()
-        load_weights(model, args.weights)
-        for p in model.parameters():
-            p.requires_grad = False
-    elif 'moco' in args.arch and 'alexnet' in args.arch:
-        # 1. load model and weights
-        key = arch_to_key[args.arch]
-        model = models.__dict__[key]()
-        model.fc = nn.Sequential()
-        if args.weights:
-            ckpt = torch.load(args.weights)
-            if 'model' in ckpt:
-                ckpt = ckpt['model']
-            else:
-                ckpt = ckpt['state_dict']
-            sd = model.state_dict()
-            for k, v in ckpt.items():
-                k = k.replace('module.', '')
-                k = k.replace('encoder.', '')
-                k = k.replace('encoder_q.', '')
-                if k in sd:
-                    sd[k] = v
-                else:
-                    print('not copied => ' + k)
-            model.load_state_dict(sd)
-        for p in model.parameters():
-            p.requires_grad = False
-        model.fc = nn.Sequential()
-    elif 'moco' in args.arch and 'resnet' in args.arch:
-        # 1. load model and weights
-        key = arch_to_key[args.arch]
-        model = models.__dict__[key]()
-        model.fc = nn.Sequential()
-        if args.weights:
-            ckpt = torch.load(args.weights)
-            if 'model' in ckpt:
-                ckpt = ckpt['model']
-            else:
-                ckpt = ckpt['state_dict']
-            sd = model.state_dict()
-            for k, v in ckpt.items():
-                k = k.replace('module.', '')
-                k = k.replace('encoder.', '')
-                k = k.replace('encoder_q.', '')
-                if k in sd:
-                    sd[k] = v
-                else:
-                    print('not copied => ' + k)
-            model.load_state_dict(sd)
-        for p in model.parameters():
-            p.requires_grad = False
-        model.fc = nn.Sequential()
-    elif 'resnet' in args.arch:
-        key = arch_to_key[args.arch]
-        model = models.__dict__[key]()
-        load_weights(model, args.weights)
-        for p in model.parameters():
-            p.requires_grad = False
 
+    model = None
+    if args.arch == 'alexnet' :
+        model = alexnet()
         model.fc = nn.Sequential()
-    else:
-        raise ValueError('arch not found: ' + args.arch)
+        model = torch.nn.DataParallel(model).cuda()
+        checkpoint = torch.load(args.weights)
+        model.load_state_dict(checkpoint['model'] , strict=False)
+
+    elif args.arch == 'resnet18' :
+        model = resnet18()
+        model.fc = nn.Sequential()
+        model = torch.nn.DataParallel(model).cuda()
+        checkpoint = torch.load(args.weights)
+        model.load_state_dict(checkpoint['model'], strict=False)
+
+    elif args.arch == 'mobilenet' :
+        model = mobilenet()
+        model.fc = nn.Sequential()
+        model = torch.nn.DataParallel(model).cuda()
+        checkpoint = torch.load(args.weights)
+        model.load_state_dict(checkpoint['model'] , strict=False)
+
+    elif args.arch == 'resnet50' :
+        model = resnet50()
+        model.fc = nn.Sequential()
+        model = torch.nn.DataParallel(model).cuda()
+        checkpoint = torch.load(args.weights)
+        model.load_state_dict(checkpoint['model'], strict=False)
+
+    elif args.arch == 'moco_alexnet' :
+        model = alexnet()
+        model.fc = nn.Sequential()
+        model = nn.Sequential(OrderedDict([('encoder_q', model)]))
+        model = model.cuda()
+        checkpoint = torch.load(args.weights)
+        model.load_state_dict(checkpoint['state_dict'] , strict=False)
+
+    elif args.arch == 'moco_resnet18' :
+        model = resnet18().cuda()
+        model = nn.Sequential(OrderedDict([('encoder_q' , model)]))
+        model = torch.nn.DataParallel(model).cuda()
+        checkpoint = torch.load(args.weights)
+        model.load_state_dict(checkpoint['state_dict'] , strict=False)
+        model.module.encoder_q.fc = nn.Sequential()
+
+    elif args.arch == 'moco_mobilenet' :
+        model = mobilenet()
+        model.fc = nn.Sequential()
+        model = nn.Sequential(OrderedDict([('encoder_q', model)]))
+        model = torch.nn.DataParallel(model).cuda()
+        checkpoint = torch.load(args.weights)
+        model.load_state_dict(checkpoint['state_dict'], strict=False)
+
+    elif args.arch == 'moco_resnet50' :
+        model = resnet50().cuda()
+        model = nn.Sequential(OrderedDict([('encoder_q' , model)]))
+        model = torch.nn.DataParallel(model).cuda()
+        checkpoint = torch.load(args.weights)
+        model.load_state_dict(checkpoint['state_dict'] , strict=False)
+        model.module.encoder_q.fc = nn.Sequential()
+
+    elif args.arch == 'sup_alexnet' :
+        model = models.alexnet(pretrained=True)
+        modules = list(model.children())[:-1]
+        classifier_modules = list(model.classifier.children())[:-1]
+        modules.append(Flatten())
+        modules.append(nn.Sequential(*classifier_modules))
+        model = nn.Sequential(*modules)
+        model = model.cuda()
+
+    elif args.arch == 'sup_resnet18' :
+        model = models.resnet18(pretrained=True)
+        model.fc = nn.Sequential()
+        model = torch.nn.DataParallel(model).cuda()
+
+    elif args.arch == 'sup_mobilenet' :
+        model = models.mobilenet_v2(pretrained=True)
+        model.classifier = nn.Sequential()
+        model = torch.nn.DataParallel(model).cuda()
+
+    elif args.arch == 'sup_resnet50' :
+        model = models.resnet50(pretrained=True)
+        model.fc = nn.Sequential()
+        model = torch.nn.DataParallel(model).cuda()
+
+    for param in model.parameters():
+        param.requires_grad = False
 
     return model
 
@@ -232,8 +191,8 @@ def get_loaders(dataset_dir, bs, workers):
 
 
 def main_worker(args):
-    global best_acc1
 
+    start = time.time()
     # Get train/val loader 
     # ---------------------------------------------------------------
     train_loader, val_loader = get_loaders(args.data, args.batch_size, args.workers)
@@ -243,11 +202,8 @@ def main_worker(args):
     # ------------------------------------------------------------------------
     # MODIFY 'get_model' TO EVALUATE YOUR MODEL
     model = get_model(args)
-    model = nn.DataParallel(model).cuda()
 
     # ------------------------------------------------------------------------
-
-
     # Forward training samples throw the model and cache feats
     # ------------------------------------------------------------------------
     cudnn.benchmark = True
@@ -258,7 +214,7 @@ def main_worker(args):
         train_feats, train_labels = torch.load(cached_feats)
     else:
         logger.info('get train feats =>')
-        train_feats, train_labels = get_feats(train_loader, model, args.print_freq, args.no_normalize)
+        train_feats, train_labels = get_feats(train_loader, model, args.print_freq)
         torch.save((train_feats, train_labels), cached_feats)
 
     cached_feats = '%s/val_feats.pth.tar' % args.save
@@ -267,23 +223,17 @@ def main_worker(args):
         val_feats, val_labels = torch.load(cached_feats)
     else:
         logger.info('get train feats =>')
-        val_feats, val_labels = get_feats(val_loader, model, args.print_freq, args.no_normalize)
+        val_feats, val_labels = get_feats(val_loader, model, args.print_freq)
         torch.save((val_feats, val_labels), cached_feats)
 
-
     # ------------------------------------------------------------------------
-
     # Calculate NN accuracy on validation set
     # ------------------------------------------------------------------------
-    start = time.time()
-    ap = faiss_knn(train_feats, train_labels, val_feats, val_labels, args.k)
-    faiss_time = time.time() - start
-    logger.info('=> faiss time : {:.2f}s'.format(faiss_time))
-    logger.info(' * Acc {:.2f}'.format(ap))
 
-
-
-
+    acc = faiss_knn(train_feats, train_labels, val_feats, val_labels, args.k)
+    nn_time = time.time() - start
+    logger.info('=> time : {:.2f}s'.format(nn_time))
+    logger.info(' * Acc {:.2f}'.format(acc))
 
 
 def normalize(x):
@@ -313,12 +263,13 @@ def faiss_knn(feats_train, targets_train, feats_val, targets_val, k):
         shuffle(votes)
         pred[i] = max(votes, key=lambda x: x[1])[0]
 
-    ap = 100.0 * (pred == targets_val).mean()
+    acc = 100.0 * (pred == targets_val).mean()
 
-    return ap
+    return acc
 
 
-def get_feats(loader, model, print_freq, no_normalize):
+# Iterate over "loader" and forward samples through model
+def get_feats(loader, model, print_freq):
     batch_time = AverageMeter('Time', ':6.3f')
     progress = ProgressMeter(
         len(loader),
@@ -334,10 +285,7 @@ def get_feats(loader, model, print_freq, no_normalize):
         for i, (images, target) in enumerate(loader):
             images = images.cuda(non_blocking=True)
             cur_targets = target.cpu()
-            if no_normalize:
-                cur_feats = model(images).cpu()
-            else:
-                cur_feats = normalize(model(images)).cpu()
+            cur_feats = normalize(model(images)).cpu()
             B, D = cur_feats.shape
             inds = torch.arange(B) + ptr
 

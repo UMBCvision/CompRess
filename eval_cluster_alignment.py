@@ -34,7 +34,7 @@ parser = argparse.ArgumentParser(description='Cluster Alignment evaluation')
 parser.add_argument('data', metavar='DIR', help='path to dataset')
 parser.add_argument('-j', '--workers', default=4, type=int,
                     help='number of data loading workers (default: 4)')
-parser.add_argument('--model', type=str, default='alexnet',
+parser.add_argument('-a', '--arch', type=str, default='alexnet',
                         choices=['alexnet' , 'resnet18' , 'resnet50', 'mobilenet' ,
                                  'moco_alexnet' , 'moco_resnet18' , 'moco_resnet50', 'moco_mobilenet' ,
                                  'sup_alexnet' , 'sup_resnet18' , 'sup_resnet50', 'sup_mobilenet'])
@@ -61,12 +61,12 @@ parser.add_argument('--confusion_matrix', action='store_true',
 parser.add_argument('--load_cache', action='store_true',
                     help='should the features be recomputed or loaded from the cache')
 
-class ImageFolderEx(datasets.ImageFolder) :
+
+class ImageFolderEx(datasets.ImageFolder):
 
     def __getitem__(self, index):
         sample, target = super(ImageFolderEx, self).__getitem__(index)
         return sample, target , index
-
 
 
 def get_loaders(dataset_dir, bs, workers):
@@ -86,7 +86,6 @@ def get_loaders(dataset_dir, bs, workers):
             normalize,
         ]))
 
-
     train_loader = DataLoader(
         train_dataset, batch_size=bs, shuffle=False,
         num_workers=workers, pin_memory=True)
@@ -104,9 +103,6 @@ def get_loaders(dataset_dir, bs, workers):
     return train_loader, val_loader
 
 
-
-
-
 def get_featureEextractor(model):
     modules = list(model.children())[:-2]
     modules.append(Flatten())
@@ -118,6 +114,7 @@ def get_featureEextractor(model):
 class Flatten(nn.Module):
     def forward(self, x):
         return torch.flatten(x, 1)
+
 
 def main():
     global logger
@@ -164,6 +161,7 @@ def accimage_loader(path):
         # Potentially a decoding problem, fall back to PIL.Image
         return pil_loader(path)
 
+
 def default_loader(path):
     from torchvision import get_image_backend
     if get_image_backend() == 'accimage':
@@ -172,54 +170,53 @@ def default_loader(path):
         return pil_loader(path)
 
 
-class Flatten(nn.Module):
-    def forward(self, x):
-        return torch.flatten(x, 1)
-
-
-def calculate_alligment_score(inputSet , targetSet) :
+def calculate_alligment_score(inputSet , targetSet):
     return len(Intersection(inputSet, targetSet)) / len(inputSet)
 
-def calculate_precision(inputSet , targetSet) :
+
+def calculate_precision(inputSet , targetSet):
     return len(Intersection(inputSet, targetSet)) / len(inputSet)
+
 
 def Intersection(lst1, lst2):
     return set(lst1).intersection(lst2)
 
+
 def Union(lst1, lst2):
     return set(lst1).union(lst2)
 
+
 def get_model(args):
 
-    if args.model == 'alexnet' :
+    if args.arch == 'alexnet' :
         model = alexnet()
         model.fc = nn.Sequential()
         model = torch.nn.DataParallel(model).cuda()
         checkpoint = torch.load(args.weights)
         model.load_state_dict(checkpoint['model'] , strict=False)
 
-    elif args.model == 'resnet18' :
+    elif args.arch == 'resnet18' :
         model = resnet18()
         model.fc = nn.Sequential()
         model = torch.nn.DataParallel(model).cuda()
         checkpoint = torch.load(args.weights)
         model.load_state_dict(checkpoint['model'], strict=False)
 
-    elif args.model == 'mobilenet' :
+    elif args.arch == 'mobilenet' :
         model = mobilenet()
         model.fc = nn.Sequential()
         model = torch.nn.DataParallel(model).cuda()
         checkpoint = torch.load(args.weights)
-        model.load_state_dict(checkpoint['model'] , strict=True)
+        model.load_state_dict(checkpoint['model'] , strict=False)
 
-    elif args.model == 'resnet50' :
+    elif args.arch == 'resnet50' :
         model = resnet50()
         model.fc = nn.Sequential()
         model = torch.nn.DataParallel(model).cuda()
         checkpoint = torch.load(args.weights)
         model.load_state_dict(checkpoint['model'], strict=False)
 
-    elif args.model == 'moco_alexnet' :
+    elif args.arch == 'moco_alexnet' :
         model = alexnet()
         model.fc = nn.Sequential()
         model = nn.Sequential(OrderedDict([('encoder_q', model)]))
@@ -227,7 +224,7 @@ def get_model(args):
         checkpoint = torch.load(args.weights)
         model.load_state_dict(checkpoint['state_dict'] , strict=False)
 
-    elif args.model == 'moco_resnet18' :
+    elif args.arch == 'moco_resnet18' :
         model = resnet18().cuda()
         model = nn.Sequential(OrderedDict([('encoder_q' , model)]))
         model = torch.nn.DataParallel(model).cuda()
@@ -235,7 +232,7 @@ def get_model(args):
         model.load_state_dict(checkpoint['state_dict'] , strict=False)
         model.module.encoder_q.fc = nn.Sequential()
 
-    elif args.model == 'moco_mobilenet' :
+    elif args.arch == 'moco_mobilenet' :
         model = mobilenet()
         model.fc = nn.Sequential()
         model = nn.Sequential(OrderedDict([('encoder_q', model)]))
@@ -243,7 +240,7 @@ def get_model(args):
         checkpoint = torch.load(args.weights)
         model.load_state_dict(checkpoint['state_dict'], strict=False)
 
-    elif args.model == 'moco_resnet50' :
+    elif args.arch == 'moco_resnet50' :
         model = resnet50().cuda()
         model = nn.Sequential(OrderedDict([('encoder_q' , model)]))
         model = torch.nn.DataParallel(model).cuda()
@@ -251,7 +248,7 @@ def get_model(args):
         model.load_state_dict(checkpoint['state_dict'] , strict=False)
         model.module.encoder_q.fc = nn.Sequential()
 
-    elif args.model == 'sup_alexnet' :
+    elif args.arch == 'sup_alexnet' :
         model = models.alexnet(pretrained=True)
         modules = list(model.children())[:-1]
         classifier_modules = list(model.classifier.children())[:-1]
@@ -260,23 +257,20 @@ def get_model(args):
         model = nn.Sequential(*modules)
         model = torch.nn.DataParallel(model).cuda()
 
-    elif args.model == 'sup_resnet18' :
+    elif args.arch == 'sup_resnet18' :
         model = models.resnet18(pretrained=True)
         model.fc = nn.Sequential()
         model = torch.nn.DataParallel(model).cuda()
 
-    elif args.model == 'sup_mobilenet' :
+    elif args.arch == 'sup_mobilenet' :
         model = models.mobilenet_v2(pretrained=True)
         model.classifier = nn.Sequential()
         model = torch.nn.DataParallel(model).cuda()
 
-    elif args.model == 'sup_resnet50' :
+    elif args.arch == 'sup_resnet50' :
         model = models.resnet50(pretrained=True)
         model.fc = nn.Sequential()
         model = torch.nn.DataParallel(model).cuda()
-
-
-
 
     for param in model.parameters():
         param.requires_grad = False
@@ -346,7 +340,6 @@ def get_cluster_samples_train(train_clusters, args):
         train_dataset_input, batch_size=args.batch_size, shuffle=False,
         num_workers=args.workers, pin_memory=True)
 
-
     train_loader_target, _ = get_loaders(args.data, args.batch_size, args.workers)
 
     input_cluster_samples_train = []
@@ -376,7 +369,6 @@ def get_cluster_samples_train(train_clusters, args):
 
 
     return input_cluster_samples_train , target_cluster_samples_train
-
 
 
 def get_cluster_samples_val(val_clusters, args):
@@ -425,6 +417,7 @@ def get_cluster_samples_val(val_clusters, args):
 
     return input_cluster_samples_val, target_cluster_samples_val
 
+
 def dump_random_cluster(cluster_set , dataset, args) :
     cluster_index = random.randint(0,1000)
     cluster = cluster_set[cluster_index]
@@ -434,11 +427,12 @@ def dump_random_cluster(cluster_set , dataset, args) :
 
     result_img_list = [imgs_list[i][0] for i in range(20)]
 
-
     result_img = torch.cat(result_img_list , dim=2)
 
     return result_img
 
+
+# Generate Random Image Samples from random clusters
 def dump_visualization(input_cluster_samples_train , args):
     traindir = os.path.join(args.data, 'train')
     train_dataset = ImageFolderEx(
@@ -456,6 +450,7 @@ def dump_visualization(input_cluster_samples_train , args):
     save_dir = '%s/query_img.jpg' % (args.save)
     save_image(query_img, save_dir)
 
+
 def main_worker(args):
 
     # Get train/val loader
@@ -468,10 +463,6 @@ def main_worker(args):
     model = get_model(args)
 
     # ------------------------------------------------------------------------
-
-
-
-
     # Train K-means
     # ---------------------------------------------------------------
     train_clusters = os.path.join(args.save, 'train_clusters.txt')
@@ -480,8 +471,6 @@ def main_worker(args):
     if (not os.path.exists(train_clusters)) or (not os.path.exists(val_clusters)):
         train_kmeans(model, train_loader, val_loader, args)
 
-
-
     cached_cluster_samples = '%s/cluster_list_cached.p' % args.save
     if os.path.exists(cached_cluster_samples):
         input_cluster_samples_train, target_cluster_samples_train = pickle.load( open(cached_cluster_samples, "rb" ) )
@@ -489,15 +478,7 @@ def main_worker(args):
         input_cluster_samples_train , target_cluster_samples_train = get_cluster_samples_train(train_clusters, args)
         pickle.dump((input_cluster_samples_train, target_cluster_samples_train), open(cached_cluster_samples, "wb"))
 
-
     # ---------------------------------------------------------------
-
-
-
-
-
-
-
     # Map clusters to categories
     # ---------------------------------------------------------------
     cluster_allignment_cost = np.zeros((1000, 1000))
@@ -518,21 +499,16 @@ def main_worker(args):
     for k in range(1000):
         target_to_input_map[input_to_target_map[k]] = k
 
-
     confusion_matrix = confusion_matrix[target_to_input_map.astype(int)]
 
     if args.confusion_matrix :
         cached_data_confusion_matrix = '%s/confusion_matrix.p' % args.save
         pickle.dump(confusion_matrix, open(cached_data_confusion_matrix, "wb"))
 
-
     if args.visualization :
         dump_visualization(input_cluster_samples_train , args)
 
     # ---------------------------------------------------------------
-
-
-
     # Calculate accuracy on train/val set
     # ---------------------------------------------------------------
     correct = 0
@@ -543,12 +519,9 @@ def main_worker(args):
         correct += len(Intersection(input_cluster, target_cluster))
         all += len(target_cluster)
 
-
     print("acc train : %f" % (correct / all))
 
-
     input_cluster_samples_val, target_cluster_samples_val = get_cluster_samples_val(val_clusters, args)
-
 
     correct = 0
     all = 0
@@ -561,15 +534,6 @@ def main_worker(args):
     print("acc val : %f" % (correct / all))
 
     # ---------------------------------------------------------------
-
-
-
-
-
-
-
-
-
 
 
 def faiss_kmeans(train_feats, val_feats, nmb_clusters):
@@ -588,19 +552,18 @@ def faiss_kmeans(train_feats, val_feats, nmb_clusters):
     co.shard = True
     index = faiss.index_cpu_to_all_gpus(index, co)
 
-
     clus.train(train_feats, index)
     _, train_a = index.search(train_feats, 1)
     _, val_a = index.search(val_feats, 1)
 
     return list(train_a[:, 0]), list(val_a[:, 0])
 
+
 def normalize(x):
     return x / x.norm(2, dim=1, keepdim=True)
 
 
-import pdb
-
+# Iterate over "loader" and forward samples through model
 def get_feats(loader, model, print_freq):
     batch_time = AverageMeter('Time', ':6.3f')
     progress = ProgressMeter(
@@ -617,10 +580,8 @@ def get_feats(loader, model, print_freq):
         for i, (images, target, index) in enumerate(loader):
             images = images.cuda(non_blocking=True)
             cur_targets = target.cpu()
-            # pdb.set_trace()
             cur_feats = normalize(model(images)).cpu()
-            # cur_feats = model(images).cpu()
-            # pdb.set_trace()
+
             B, D = cur_feats.shape
             inds = torch.arange(B) + ptr
 
@@ -640,7 +601,6 @@ def get_feats(loader, model, print_freq):
                 logger.info(progress.display(i))
 
     return feats, labels
-
 
 
 if __name__ == '__main__':
