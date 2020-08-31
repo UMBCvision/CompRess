@@ -126,12 +126,10 @@ python eval_cluster_alignment.py  \
 To evaluate Linear Classifier models on ImageNet, run:
 
 ```eval
-python save_var_mean.py --x_root <NN_evaluation_save_folder>
 
-python eval_multiple_linear.py \
+python eval_linear.py \
     --arch alexnet \
     --weights <path_to_pretrained_model> \
-    --mean_paths <NN_evaluation_save_folder>/var_mean.pth.tar \
     --save <path_to_save_folder> \
     <path_to_imagenet_data>
 ```
