@@ -1,4 +1,5 @@
-from collections import Counter
+import builtins
+from collections import Counter, OrderedDict
 from random import shuffle
 import argparse
 import os
@@ -22,9 +23,11 @@ import numpy as np
 import faiss
 
 from tools import *
-from models.resnet import resnet18,resnet50
+from models.resnet import resnet18, resnet50
 from models.alexnet import AlexNet as alexnet
 from models.mobilenet import MobileNetV2 as mobilenet
+from models.resnet_swav import resnet50w5
+from eval_linear import load_weights
 
 
 parser = argparse.ArgumentParser(description='NN evaluation')
@@ -33,8 +36,8 @@ parser.add_argument('-j', '--workers', default=8, type=int,
                     help='number of data loading workers (default: 4)')
 parser.add_argument('-a', '--arch', type=str, default='alexnet',
                         choices=['alexnet' , 'resnet18' , 'resnet50', 'mobilenet' ,
-                                 'moco_alexnet' , 'moco_resnet18' , 'moco_resnet50', 'moco_mobilenet' ,
-                                 'sup_alexnet' , 'sup_resnet18' , 'sup_resnet50', 'sup_mobilenet'])
+                                 'moco_alexnet' , 'moco_resnet18' , 'moco_resnet50', 'moco_mobilenet', 'resnet50w5',
+                                 'sup_alexnet' , 'sup_resnet18' , 'sup_resnet50', 'sup_mobilenet', 'pt_alexnet'])
 
 
 parser.add_argument('-b', '--batch-size', default=256, type=int,
@@ -57,8 +60,16 @@ def main():
 
     args = parser.parse_args()
     makedirs(args.save)
-    logger = get_logger(logpath=os.path.join(args.save, 'logs'), filepath=os.path.abspath(__file__))
-    logger.info(args)
+
+    logger = get_logger(
+        logpath=os.path.join(args.save, 'logs'),
+        filepath=os.path.abspath(__file__)
+    )
+    def print_pass(*args):
+        logger.info(*args)
+    builtins.print = print_pass
+
+    print(args)
 
     main_worker(args)
 
@@ -71,7 +82,21 @@ def get_model(args):
         model.fc = nn.Sequential()
         model = torch.nn.DataParallel(model).cuda()
         checkpoint = torch.load(args.weights)
-        model.load_state_dict(checkpoint['model'] , strict=False)
+        msg = model.load_state_dict(checkpoint['model'], strict=False)
+        print(msg)
+
+    elif args.arch == 'pt_alexnet' :
+        model = models.alexnet(num_classes=16000)
+        checkpoint = torch.load(args.weights)
+        sd = checkpoint['state_dict']
+        sd = {k.replace('module.', ''): v for k, v in sd.items()}
+        msg = model.load_state_dict(sd, strict=True)
+        classif = list(model.classifier.children())[:5]
+        model.classifier = nn.Sequential(*classif)
+        model = torch.nn.DataParallel(model).cuda()
+        print(model)
+        print(msg)
+
 
     elif args.arch == 'resnet18' :
         model = resnet18()
@@ -126,6 +151,12 @@ def get_model(args):
         model.load_state_dict(checkpoint['state_dict'] , strict=False)
         model.module.encoder_q.fc = nn.Sequential()
 
+    elif args.arch == 'resnet50w5':
+        model = resnet50w5()
+        model.l2norm = None
+        load_weights(model, args.weights)
+        model = torch.nn.DataParallel(model).cuda()
+
     elif args.arch == 'sup_alexnet' :
         model = models.alexnet(pretrained=True)
         modules = list(model.children())[:-1]
@@ -156,36 +187,39 @@ def get_model(args):
     return model
 
 
+class ImageFolderEx(datasets.ImageFolder) :
+    def __getitem__(self, index):
+        sample, target = super(ImageFolderEx, self).__getitem__(index)
+        return index, sample, target
+
+
 def get_loaders(dataset_dir, bs, workers):
-    # Data loading code
     traindir = os.path.join(dataset_dir, 'train')
     valdir = os.path.join(dataset_dir, 'val')
     normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                      std=[0.229, 0.224, 0.225])
 
-    train_dataset = datasets.ImageFolder(
-        traindir,
-        transforms.Compose([
-            transforms.Resize(256),
-            transforms.CenterCrop(224),
-            transforms.ToTensor(),
-            normalize,
-        ]))
-
-    # shuffle=False is very important since it is used in kmeans.py
     train_loader = DataLoader(
-        train_dataset, batch_size=bs, shuffle=False,
-        num_workers=workers, pin_memory=True)
-
-    val_loader = DataLoader(
-        datasets.ImageFolder(valdir, transforms.Compose([
+        ImageFolderEx(traindir, transforms.Compose([
             transforms.Resize(256),
             transforms.CenterCrop(224),
             transforms.ToTensor(),
             normalize,
         ])),
         batch_size=bs, shuffle=False,
-        num_workers=workers, pin_memory=True)
+        num_workers=workers, pin_memory=True,
+    )
+
+    val_loader = DataLoader(
+        ImageFolderEx(valdir, transforms.Compose([
+            transforms.Resize(256),
+            transforms.CenterCrop(224),
+            transforms.ToTensor(),
+            normalize,
+        ])),
+        batch_size=bs, shuffle=False,
+        num_workers=workers, pin_memory=True,
+    )
 
     return train_loader, val_loader
 
@@ -210,30 +244,32 @@ def main_worker(args):
 
     cached_feats = '%s/train_feats.pth.tar' % args.save
     if args.load_cache and os.path.exists(cached_feats):
-        logger.info('load train feats from cache =>')
-        train_feats, train_labels = torch.load(cached_feats)
+        print('load train feats from cache =>')
+        train_feats, train_labels, train_inds = torch.load(cached_feats)
     else:
-        logger.info('get train feats =>')
-        train_feats, train_labels = get_feats(train_loader, model, args.print_freq)
-        torch.save((train_feats, train_labels), cached_feats)
+        print('get train feats =>')
+        train_feats, train_labels, train_inds = get_feats(train_loader, model, args.print_freq)
+        torch.save((train_feats, train_labels, train_inds), cached_feats)
 
     cached_feats = '%s/val_feats.pth.tar' % args.save
     if args.load_cache and os.path.exists(cached_feats):
-        logger.info('load val feats from cache =>')
-        val_feats, val_labels = torch.load(cached_feats)
+        print('load val feats from cache =>')
+        val_feats, val_labels, val_inds = torch.load(cached_feats)
     else:
-        logger.info('get train feats =>')
-        val_feats, val_labels = get_feats(val_loader, model, args.print_freq)
-        torch.save((val_feats, val_labels), cached_feats)
+        print('get val feats =>')
+        val_feats, val_labels, val_inds = get_feats(val_loader, model, args.print_freq)
+        torch.save((val_feats, val_labels, val_inds), cached_feats)
 
     # ------------------------------------------------------------------------
     # Calculate NN accuracy on validation set
     # ------------------------------------------------------------------------
 
+    train_feats = normalize(train_feats)
+    val_feats = normalize(val_feats)
     acc = faiss_knn(train_feats, train_labels, val_feats, val_labels, args.k)
     nn_time = time.time() - start
-    logger.info('=> time : {:.2f}s'.format(nn_time))
-    logger.info(' * Acc {:.2f}'.format(acc))
+    print('=> time : {:.2f}s'.format(nn_time))
+    print(' * Acc {:.2f}'.format(acc))
 
 
 def normalize(x):
@@ -268,7 +304,6 @@ def faiss_knn(feats_train, targets_train, feats_val, targets_val, k):
     return acc
 
 
-# Iterate over "loader" and forward samples through model
 def get_feats(loader, model, print_freq):
     batch_time = AverageMeter('Time', ':6.3f')
     progress = ProgressMeter(
@@ -278,23 +313,27 @@ def get_feats(loader, model, print_freq):
 
     # switch to evaluate mode
     model.eval()
-    feats, labels, ptr = None, None, 0
+    feats, labels, indices, ptr = None, None, None, 0
 
     with torch.no_grad():
         end = time.time()
-        for i, (images, target) in enumerate(loader):
+        for i, (index, images, target) in enumerate(loader):
             images = images.cuda(non_blocking=True)
             cur_targets = target.cpu()
-            cur_feats = normalize(model(images)).cpu()
+            cur_feats = model(images).cpu()
+            cur_indices = index.cpu()
+
             B, D = cur_feats.shape
             inds = torch.arange(B) + ptr
 
             if not ptr:
                 feats = torch.zeros((len(loader.dataset), D)).float()
                 labels = torch.zeros(len(loader.dataset)).long()
+                indices = torch.zeros(len(loader.dataset)).long()
 
             feats.index_copy_(0, inds, cur_feats)
             labels.index_copy_(0, inds, cur_targets)
+            indices.index_copy_(0, inds, cur_indices)
             ptr += B
 
             # measure elapsed time
@@ -302,9 +341,10 @@ def get_feats(loader, model, print_freq):
             end = time.time()
 
             if i % print_freq == 0:
-                logger.info(progress.display(i))
+                print(progress.display(i))
 
-    return feats, labels
+    return feats, labels, indices
+
 
 
 if __name__ == '__main__':

@@ -22,6 +22,8 @@ def parse_option():
 
     parser = argparse.ArgumentParser('argument for training')
 
+    parser.add_argument('data', type=str, help='path to dataset')
+
     parser.add_argument('--print_freq', type=int, default=100, help='print frequency')
     parser.add_argument('--tb_freq', type=int, default=500, help='tb frequency')
     parser.add_argument('--save_freq', type=int, default=2, help='save frequency')
@@ -53,8 +55,6 @@ def parse_option():
     parser.add_argument('--gpu', default=None, type=int, help='GPU id to use.')
 
     parser.add_argument('--teacher', type=str, help='teacher weights/feats')
-
-    parser.add_argument('--data', type=str, help='first model')
 
     parser.add_argument('--checkpoint_path', default='output/', type=str,
                         help='where to save checkpoints. ')

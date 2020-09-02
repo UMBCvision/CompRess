@@ -20,6 +20,7 @@ import torch.nn.functional as F
 from tools import *
 from models.alexnet import AlexNet
 from models.mobilenet import MobileNetV2
+from models.resnet_swav import resnet50w5
 
 
 parser = argparse.ArgumentParser(description='Unsupervised distillation')
@@ -121,6 +122,10 @@ def get_model(arch, wts_path):
     elif arch == 'mobilenet':
         model = MobileNetV2()
         model.fc = nn.Sequential()
+        load_weights(model, wts_path)
+    elif arch == 'resnet50x5_swav':
+        model = resnet50w5()
+        model.l2norm = None
         load_weights(model, wts_path)
     elif 'resnet' in arch:
         model = models.__dict__[arch]()
@@ -278,6 +283,8 @@ def get_channels(arch):
         c = 512
     elif arch == 'mobilenet':
         c = 1280
+    elif arch == 'resnet50x5_swav':
+        c = 10240
     else:
         raise ValueError('arch not found: ' + arch)
     return c
