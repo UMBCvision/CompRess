@@ -170,11 +170,13 @@ def main_worker(args):
 
     feats_file = '%s/train_feats.pth.tar' % args.save
     print('get train feats =>')
+    # train_feats, train_labels, train_inds = torch.load(feats_file)
     train_feats, train_labels, train_inds = get_feats(train_loader, model, args.print_freq)
     torch.save((train_feats, train_labels, train_inds), feats_file)
 
     feats_file = '%s/val_feats.pth.tar' % args.save
     print('get val feats =>')
+    # val_feats, val_labels, val_inds = torch.load(feats_file)
     val_feats, val_labels, val_inds = get_feats(val_loader, model, args.print_freq)
     torch.save((val_feats, val_labels, val_inds), feats_file)
 
