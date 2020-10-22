@@ -1,7 +1,7 @@
 
 
-# CompReSS: Compressing Representations for Self-Supervised Learning
 
+# CompRess: Self-Supervised Learning by Compressing Representations
 
 <p align="center">
   <img src="https://user-images.githubusercontent.com/62820830/86079163-df578080-ba5d-11ea-84f0-79d386a5b8f1.png" width="85%">
@@ -10,8 +10,8 @@
 This repository is the official implementation of [https://arxiv.org/
 ](https://arxiv.org/) 
 
-Project webpage. [https://umbcvision.github.io/CompReSS/
-](https://umbcvision.github.io/CompReSS/) 
+Project webpage. [https://umbcvision.github.io/CompRess/
+](https://umbcvision.github.io/CompRess/) 
 
 ```
 @Article{abbasi2020compress,
