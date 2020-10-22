@@ -141,7 +141,7 @@ python eval_linear.py \
 ## Results
 
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/62820830/85651425-f2d9a480-b675-11ea-99e8-8fcf32d0a266.png" width="100%">
+  <img src="https://user-images.githubusercontent.com/62820830/96926014-04e01e00-1483-11eb-87c5-82b4100d56b5.png" width="100%">
 </p>
 
 
