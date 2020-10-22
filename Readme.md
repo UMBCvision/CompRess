@@ -4,7 +4,7 @@
 # CompRess: Self-Supervised Learning by Compressing Representations
 
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/62820830/86079163-df578080-ba5d-11ea-84f0-79d386a5b8f1.png" width="85%">
+  <img src="https://user-images.githubusercontent.com/62820830/96925942-ee39c700-1482-11eb-9eb9-9cf98e5a0748.png" width="85%">
 </p>
 
 This repository is the official implementation of [https://arxiv.org/
