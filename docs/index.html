@@ -1,10 +1,10 @@
 ---
 layout: default
-title: CompReSS 
+title: CompRess 
 ---
 
 <div style="height:25px;">
-<p style="text-align:center;"><a href="https://www.csee.umbc.edu/~soroush">Soroush Abbasi Koohpayegani</a><sup>∗</sup>, <a href="">Ajinkya Tejankar</a><sup>∗</sup> , <a href="">Vipin Pillai</a>, <a href="https://www.csee.umbc.edu/~hpirsiav/">Hamed Pirsiavash</a></p>
+<p style="text-align:center;"><a href="https://www.csee.umbc.edu/~soroush">Soroush Abbasi Koohpayegani</a><sup>∗</sup>, <a href="">Ajinkya Tejankar</a><sup>∗</sup>, <a href="https://www.csee.umbc.edu/~hpirsiav/">Hamed Pirsiavash</a></p>
 </div>
 <div style="height:25px;">
 <p style="text-align:center;">University of Maryland, Baltimore County</p>
@@ -15,20 +15,20 @@ title: CompReSS
 <div style="height:30px;">
 <br>
 
-<p style="text-align:center;"><img src="https://user-images.githubusercontent.com/62820830/86079163-df578080-ba5d-11ea-84f0-79d386a5b8f1.png" width="100%" alt style></p>
+<p style="text-align:center;"><img src="https://user-images.githubusercontent.com/62820830/96925942-ee39c700-1482-11eb-9eb9-9cf98e5a0748.png" width="100%" alt style></p>
 
-<h5 id="abstract"><b>Abstractt</b></h5>
-<p>Self-supervised learning aims to learn good representations with unlabeled data. Recent works have shown that larger models benefit more from self-supervised learning than
-    smaller models. As a result, the gap between the supervised and self-supervised learning has been greatly reduced for larger models. In this work, we focus on 
-    self-supervised learning for low capacity models that has various applications (e.g., edge computation). We compress a deep teacher model so that the student mimics the
-    relative distances between the datapoints in the teacher embeddings. For ResNet-50, our method outperforms SOTA self-supervised models marginally on ImageNet linear 
-    evaluation and with a large margin on nearest neighbor evaluation (by 6 points). For AlexNet, our method outperforms all previous methods including the fully supervised
-    model on ImageNet linear evaluation (57.6% compared to 56.5%) and by a large margin on nearest neighbor evaluation (52.3% compared to 41.4%). 
-    This is the first time a self-supervised AlexNet has outperformed supervised one on ImageNet classification.</p>
+<h5 id="abstract"><b>Abstract</b></h5>
+<p>Self-supervised learning aims to learn good representations with unlabeled data. Recent works have shown that larger models benefit more from self-supervised 
+    learning than smaller models. As a result, the gap between supervised and self-supervised learning has been greatly reduced for larger models. In this work, 
+    instead of designing a new pseudo task for self-supervised learning, we develop a model compression method to compress an already learned, deep self-supervised model 
+    (teacher) to a smaller one (student). We train the student model so that it mimics the relative similarity between the datapoints in the teacher's embedding space. 
+For AlexNet, our method outperforms all previous methods including the fully supervised model on ImageNet linear evaluation (59.0% compared to 56.5%) and on nearest
+    neighbor evaluation (50.7% compared to 41.4%). To the best of our knowledge, this is the first time a self-supervised AlexNet has outperformed supervised one on 
+    ImageNet classification.</p>
 
 <h5 id="paper"><b>Paper</b></h5>
-<p><a href="https://arxiv.org/">CompReSS: Compressing Representations for Self-Supervised Learning</a></p>
-<p><a href="https://github.com/UMBCvision/CompReSS">https://github.com/UMBCvision/CompReSS</a></p>
+<p><a href="https://arxiv.org/">CompRess: Self-Supervised Learning by Compressing Representations</a></p>
+<p><a href="https://github.com/UMBCvision/CompRess">https://github.com/UMBCvision/CompRess</a></p>
 
 <h5 id="contributions"><b>Contributions</b></h5>
 <p> Using our framework(CompReSS), we train a model using unlabeled data which is better than training a self-supervised model from the scratch. 
