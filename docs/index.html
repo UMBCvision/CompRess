@@ -42,6 +42,17 @@ For AlexNet, our method outperforms all previous methods including the fully sup
     </p>
 
 <p style="text-align:center;"><img src="{{ site.baseurl }}/assets/images/compare_graph.png" width="100%" alt style></p>
+    
+    <h5 id="Method"><b>Method</b></h5>
+<p> 
+    We propose to capture the similarity of each data point to the other training data in the teacher’s embedding space and then transfer that knowledge to the student.
+For each image, we compare it with a random set of anchor points and convert the similarities to a probability distribution over the anchor points. This distribution represents each image in terms of its nearest neighbors.
+ We want to transfer this knowledge to the student so we get the same distribution for the student as well.
+Finally, we train the student to minimize the KL divergence between the two distributions. Intuitively, we want each data point to have the same neighbors in both teacher and student embeddings.
+
+    </p>
+
+<p style="text-align:center;"><img src="{{ site.baseurl }}/assets/images/teaser.gif" width="70%" alt style></p>
 
 <h5 id="results"><b>Results</b></h5>
 
