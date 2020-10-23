@@ -40,15 +40,10 @@ For AlexNet, our method outperforms all previous methods including the fully sup
 <h5 id="results"><b>Results</b></h5>
 
     <p>
-        We train the teacher model on ImageNet without labels, compress it to the student model, and evaluate using ImageNet validation set. 
-    Our model consistently outperforms all compression methods for various teacher-student combinations.  
-    On NN, our ResNet50 is only 1 point worse than its ResNet50x4 teacher. when we compress ResNet50x4 to AlexNet, we get <b>57.6%</b> for linear and <b>52.3%</b>
-    for NN evaluation which outperforms the supervised model by almost 1 point in Linear and 9 points in NN evaluation.
-    
-    For cluster alignment, we cluster our features on 
-    ImageNet using k-means, map each cluster to a unique ImageNet category, and evaluate on ImageNet validation set for Top-1 accuracy. 
-    Our method outperforms all baselines including the supervised one with a large margin (33.3% compared to 22.9%.) Note that any model
-    below the teacher row uses the student architecture.
+        Our method is better than all compression methods for various teacher-student combinations and evaluation benchmarks.   
+        Inaddition, when we compress ResNet-50x4 to AlexNet, we get 59.0% for Linear, 50.7% for Nearest Neighbor (NN), and 27.6% for Cluster Alignment (CA) 
+        which outperforms the supervised model. On NN, our ResNet-50 is only 1 point worse than its ResNet-50x4 teacher. Note that models below the teacher row use the 
+        student architecture. Since a forward passthrough the teacher is expensive for ResNet50x4, we do not compare with CRD, Reg, and Reg-BN.
         
     </p>
 <p style="text-align:center;"><img src="{{ site.baseurl }}/assets/images/result_table1.png" width="100%" alt style>
