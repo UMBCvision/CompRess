@@ -28,7 +28,7 @@ Project webpage. [https://umbcvision.github.io/CompRess/
 Install PyTorch and ImageNet dataset following the [official PyTorch ImageNet training code](https://github.com/pytorch/examples/tree/master/imagenet). We used Python 3.7 for our experiments.
 
 
-- Install PyTorch 1.3 or higher.([pytorch.org](http://pytorch.org))
+- Install PyTorch ([pytorch.org](http://pytorch.org))
 
 
 To run NN and Cluster Alignment, you require to install FAISS. 
@@ -143,7 +143,7 @@ python eval_linear.py \
   <img src="https://user-images.githubusercontent.com/62820830/96926014-04e01e00-1483-11eb-87c5-82b4100d56b5.png" width="100%">
 </p>
 
-
+"SOTA Self-Supervised" refers to SimCLR for RexNet50x4 and MoCo for all other architectures.
 
 Our model achieves the following performance on ImageNet:
 
