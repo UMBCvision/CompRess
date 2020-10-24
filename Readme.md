@@ -7,8 +7,7 @@
   <img src="https://user-images.githubusercontent.com/62820830/96925942-ee39c700-1482-11eb-9eb9-9cf98e5a0748.png" width="85%">
 </p>
 
-This repository is the official implementation of <a href="https://www.csee.umbc.edu/~hpirsiav/papers/compress_neurips20.pdf">CompRess: Self-Supervised Learning by Compressing Representations</a>
-](https://arxiv.org/) 
+This repository is the official implementation of <a href="https://www.csee.umbc.edu/~hpirsiav/papers/compress_neurips20.pdf">CompRess: Self-Supervised Learning by Compressing Representations</a> 
 
 Project webpage. [https://umbcvision.github.io/CompRess/
 ](https://umbcvision.github.io/CompRess/) 
