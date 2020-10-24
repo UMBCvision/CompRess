@@ -28,7 +28,7 @@ Project webpage. [https://umbcvision.github.io/CompRess/
 Install PyTorch and ImageNet dataset following the [official PyTorch ImageNet training code](https://github.com/pytorch/examples/tree/master/imagenet). We used Python 3.7 for our experiments.
 
 
-- Install PyTorch ([pytorch.org](http://pytorch.org))
+- Install PyTorch 1.3 or higher.([pytorch.org](http://pytorch.org))
 
 
 To run NN and Cluster Alignment, you require to install FAISS. 
