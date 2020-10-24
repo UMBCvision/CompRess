@@ -14,9 +14,9 @@ Project webpage. [https://umbcvision.github.io/CompRess/
 
 ```
 @Article{abbasi2020compress,
-  author  = {Soroush Abbasi Koohpayegani and Ajinkya Tejankar and Vipin Pillai and Hamed Pirsiavash},
-  title   = {CompReSS: Compressing Representations for Self-Supervised Learning},
-  journal = {arXiv preprint arXiv:},
+  author  = {Koohpayegani, Soroush Abbasi and Tejankar, Ajinkya and Pirsiavash, Hamed},
+  title   = {CompRess: Self-Supervised Learning by Compressing Representations},
+  journal = {Advances in neural information processing systems},
   year    = {2020},
 }
 ```
