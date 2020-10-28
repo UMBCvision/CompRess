@@ -1,0 +1,6 @@
+@inproceedings{koohpayegani2020compress,
+  title={CompRess: Self-Supervised Learning by Compressing Representations},
+  author={Soroush Abbasi Koohpayegani, Ajinkya Tejankar, Hamed Pirsiavash},
+  year={2020},
+  booktitle={NeurIPS},
+}
