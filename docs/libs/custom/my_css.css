@@ -71,6 +71,16 @@ h4 {
 .project-caption {
   padding: 3px;
 }
+.menu {
+  text-align: center;
+}
+.menu ul {
+  list-style: none;
+}
+.menu li {
+  display: inline;
+  padding: 0px 10px;
+}
 
 /* Larger than phone */
 @media (min-width: 550px) {
