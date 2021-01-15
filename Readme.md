@@ -153,6 +153,7 @@ Our model achieves the following performance on ImageNet:
 | CompRess(Resnet50) | SimCLR ResNet50x4(cached) |               71.6%              |        63.4%        | 42.0% | [Pre-trained Resnet50](https://drive.google.com/file/d/15rzzSkcedEuCE7Cm8yLXopA5PqHUQscb/view?usp=sharing) |
 | CompRess(Mobilenet)| MoCoV2 ResNet50 |               63.0%              |        54.4%        | 35.5% | [Pre-trained Mobilenet](https://drive.google.com/file/d/1gNkO48iREh6M6uuLd8TGqaOm3ChWiAdc/view?usp=sharing) |
 | CompRess(Resnet18) | MoCoV2 ResNet50 |               61.7%              |        53.4%        | 34.7% | [Pre-trained Resnet18](https://drive.google.com/file/d/1L-RCmD4gMeicxJhIeqNKU09_sH8R3bwS/view?usp=sharing) | 
+| CompRess(Resnet18) | SwAV ResNet50 | 65.6% | 56.0% | 26.3% | [Pre-trained Resnet18](https://drive.google.com/file/d/1ZtPUAuq_S6-Yqtuajb-BdffKm--eyxPw/view?usp=sharing) |
 | CompRess(Alexnet)  | SimCLR ResNet50x4(cached) |               57.6%              |        52.3%        | 33.3% | [Pre-trained Alexnet](https://drive.google.com/file/d/1wiEdfk6unXKtYRL1faIMoZMXnShaxBMU/view?usp=sharing) |
 
 
